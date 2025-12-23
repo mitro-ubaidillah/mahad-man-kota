@@ -15,7 +15,7 @@
 
                 <div class="mb-4">
                     <x-input-label for="email" :value="__('Email')" />
-                    <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" required />
+                    <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="off" />
                 </div>
 
                 <div class="mb-4">
@@ -43,6 +43,10 @@
     </div>
     <script>
         (function(){
+            const checkUrl = '{{ route('admin.users.check-email') }}';
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            let debounceTimer;
+
             const form = document.querySelector('form');
             const submit = document.getElementById('submit-btn');
 
@@ -94,6 +98,57 @@
                     submit.blur();
                 }
             });
+
+            // Real-time email availability check
+            const emailInput = document.querySelector('[name="email"]');
+            function showAvailability(input, available){
+                let next = input.nextElementSibling;
+                // if an inline validation error exists, don't overwrite it
+                if(next && next.classList && next.classList.contains('input-error-msg') && next.textContent.trim() !== ''){
+                    return;
+                }
+                // remove previous availability
+                const existing = input.parentNode.querySelector('.input-available-msg');
+                if(existing) existing.remove();
+
+                const el = document.createElement('div');
+                el.className = 'input-available-msg text-sm mt-1';
+                if(available){
+                    el.classList.add('text-green-600');
+                    el.textContent = 'Email is available';
+                } else {
+                    el.classList.add('text-red-600');
+                    el.textContent = 'Email is already taken';
+                }
+                input.parentNode.appendChild(el);
+            }
+
+            if(emailInput){
+                emailInput.addEventListener('input', function(){
+                    clearTimeout(debounceTimer);
+                    const val = this.value.trim();
+                    if(!val || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val)){
+                        // remove availability if invalid
+                        const existing = this.parentNode.querySelector('.input-available-msg'); if(existing) existing.remove();
+                        return;
+                    }
+                    debounceTimer = setTimeout(()=>{
+                        fetch(checkUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ email: val })
+                        }).then(r=>r.json()).then(data=>{
+                            showAvailability(emailInput, !!data.available);
+                        }).catch(()=>{
+                            // ignore
+                        });
+                    }, 500);
+                });
+            }
         })();
     </script>
 </x-app-layout>

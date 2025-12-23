@@ -99,4 +99,26 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('admin.users.index')->with('success','User deleted');
     }
+
+    /**
+     * Check email availability (AJAX)
+     */
+    public function checkEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'user_id' => 'nullable|integer',
+        ]);
+
+        $email = $request->input('email');
+        $userId = $request->input('user_id');
+
+        $exists = User::where('email', $email)
+            ->when($userId, function ($q) use ($userId) {
+                return $q->where('id', '!=', $userId);
+            })
+            ->exists();
+
+        return response()->json(['available' => ! $exists]);
+    }
 }

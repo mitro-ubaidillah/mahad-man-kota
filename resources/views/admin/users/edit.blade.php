@@ -44,6 +44,11 @@
     </div>
     <script>
         (function(){
+            const checkUrl = '{{ route('admin.users.check-email') }}';
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            let debounceTimer;
+            const currentUserId = '{{ $user->id }}';
+
             const form = document.querySelector('form');
             const submit = document.getElementById('submit-btn');
             if(!form) return;
@@ -94,6 +99,51 @@
                     submit.blur();
                 }
             });
+
+            // Real-time check (edit) — include user_id to ignore own email
+            const emailInput = document.querySelector('[name="email"]');
+            function showAvailability(input, available){
+                let next = input.nextElementSibling;
+                if(next && next.classList && next.classList.contains('input-error-msg') && next.textContent.trim() !== ''){
+                    return;
+                }
+                const existing = input.parentNode.querySelector('.input-available-msg');
+                if(existing) existing.remove();
+                const el = document.createElement('div');
+                el.className = 'input-available-msg text-sm mt-1';
+                if(available){
+                    el.classList.add('text-green-600');
+                    el.textContent = 'Email is available';
+                } else {
+                    el.classList.add('text-red-600');
+                    el.textContent = 'Email is already taken';
+                }
+                input.parentNode.appendChild(el);
+            }
+
+            if(emailInput){
+                emailInput.addEventListener('input', function(){
+                    clearTimeout(debounceTimer);
+                    const val = this.value.trim();
+                    if(!val || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val)){
+                        const existing = this.parentNode.querySelector('.input-available-msg'); if(existing) existing.remove();
+                        return;
+                    }
+                    debounceTimer = setTimeout(()=>{
+                        fetch(checkUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ email: val, user_id: currentUserId })
+                        }).then(r=>r.json()).then(data=>{
+                            showAvailability(emailInput, !!data.available);
+                        }).catch(()=>{});
+                    }, 500);
+                });
+            }
         })();
     </script>
 </x-app-layout>

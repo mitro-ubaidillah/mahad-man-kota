@@ -32,5 +32,6 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::middleware(['auth','is_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::post('users/check-email', [AdminUserController::class, 'checkEmail'])->name('users.check-email');
     Route::resource('users', AdminUserController::class);
 });
