@@ -29,10 +29,10 @@
                             <td class="px-6 py-4">{{ $user->is_admin ? 'Yes' : 'No' }}</td>
                             <td class="px-6 py-4">
                                 <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600">Edit</a>
-                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 ml-4">Delete</button>
+                                    <button type="submit" class="text-red-600 ml-4 delete-btn">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -44,4 +44,20 @@
             </div>
         </div>
     </div>
+    <script>
+        // confirm delete
+        document.querySelectorAll('.delete-form').forEach(function(form){
+            form.addEventListener('submit', function(e){
+                const email = form.closest('tr').querySelectorAll('td')[2].innerText.trim();
+                if(email === 'root@root.com'){
+                    alert('Root user cannot be deleted.');
+                    e.preventDefault();
+                    return;
+                }
+                if(!confirm('Are you sure you want to delete user ' + email + '?')){
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </x-app-layout>

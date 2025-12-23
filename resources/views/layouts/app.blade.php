@@ -29,6 +29,27 @@
 
             <!-- Page Content -->
             <main>
+                {{-- Flash messages --}}
+                @if(session('success') || session('error') || session('info'))
+                    <div id="flash-message" class="max-w-7xl mx-auto mt-6 px-4 sm:px-6 lg:px-8">
+                        @if(session('success'))
+                            <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded" role="alert">{{ session('success') }}</div>
+                        @endif
+                        @if(session('error'))
+                            <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded" role="alert">{{ session('error') }}</div>
+                        @endif
+                        @if(session('info'))
+                            <div class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded" role="alert">{{ session('info') }}</div>
+                        @endif
+                    </div>
+                    <script>
+                        setTimeout(function(){
+                            const el = document.getElementById('flash-message');
+                            if(el) el.style.display = 'none';
+                        }, 5000);
+                    </script>
+                @endif
+
                 {{ $slot }}
             </main>
         </div>
