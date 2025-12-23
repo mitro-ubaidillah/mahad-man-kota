@@ -1,3 +1,50 @@
+# Laravel 10 - Tailwind + Auth (Breeze)
+
+Project scaffold generated with Laravel 10 and Breeze (Blade + Tailwind). Includes:
+
+- Authentication (login/register/profile) via Breeze.
+- Admin user management (CRUD) under `/admin/users` protected by `is_admin` middleware.
+- Default root admin user created by seeder:
+  - email: `root@root.com`
+  - password: `root123`
+
+Quick start (macOS / zsh):
+
+1. Install PHP dependencies:
+```bash
+composer install
+```
+
+2. Install JS dependencies and build assets:
+```bash
+npm install
+npm run build
+```
+
+3. Configure environment (the project is set up to use SQLite by default):
+```bash
+cp .env.example .env
+# ensure .env has DB_CONNECTION=sqlite and DB_DATABASE=database/database.sqlite
+touch database/database.sqlite
+php artisan key:generate
+```
+
+4. Run migrations and seed root user:
+```bash
+php artisan migrate --force
+php artisan db:seed --class=RootUserSeeder
+```
+
+5. Run local server:
+```bash
+php artisan serve
+```
+
+Open http://127.0.0.1:8000 and login with the root credentials above.
+
+Notes:
+- Admin routes are prefixed with `/admin` and require the authenticated user to have `is_admin` set.
+- To access user management: log in as `root@root.com` and go to `/admin/users`.
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
