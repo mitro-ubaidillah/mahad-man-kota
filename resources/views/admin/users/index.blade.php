@@ -5,8 +5,24 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-4">
+            <div class="mb-4 flex items-center justify-between">
                 <a href="{{ route('admin.users.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded">Tambah User</a>
+
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <form method="GET" action="{{ route('admin.users.index') }}" id="per-page-form">
+                            <label for="per_page" class="text-sm text-gray-600 mr-2">Per page</label>
+                            <select name="per_page" id="per_page" class="border rounded px-2 py-1" onchange="document.getElementById('per-page-form').submit()">
+                                @foreach([10,20,50,100] as $n)
+                                    <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }}</option>
+                                @endforeach
+                            </select>
+                        </form>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ $users->total() }}
+                    </div>
+                </div>
             </div>
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">

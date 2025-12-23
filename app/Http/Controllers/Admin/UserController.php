@@ -14,8 +14,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('id','desc')->paginate(20);
-        return view('admin.users.index', compact('users'));
+        $perPage = request()->input('per_page', 20);
+        $perPage = is_numeric($perPage) ? (int) $perPage : 20;
+        $perPage = max(1, min(100, $perPage)); // limit between 1 and 100
+
+        $users = User::orderBy('id', 'desc')->paginate($perPage)->withQueryString();
+
+        return view('admin.users.index', compact('users', 'perPage'));
     }
 
     /**
