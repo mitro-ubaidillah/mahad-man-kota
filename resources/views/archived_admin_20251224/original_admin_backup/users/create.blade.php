@@ -5,7 +5,7 @@
 
     <div class="py-6">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <form method="POST" action="{{ route('admin.users.store') }}">
+            <form method="POST" action="{{ route('users.store') }}">
                 @csrf
 
                 <div class="mb-4">
@@ -43,7 +43,7 @@
     </div>
     <script>
         (function(){
-            const checkUrl = '{{ route('admin.users.check-email') }}';
+            const checkUrl = '{{ route('users.check-email') }}';
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             let debounceTimer;
 

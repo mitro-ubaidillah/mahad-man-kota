@@ -1,0 +1,52 @@
+<?php
+
+return [
+    'accepted' => 'Atribut :attribute harus diterima.',
+    'active_url' => 'Atribut :attribute bukan URL yang valid.',
+    'after' => 'Atribut :attribute harus tanggal setelah :date.',
+    'after_or_equal' => 'Atribut :attribute harus tanggal setelah atau sama dengan :date.',
+    'alpha' => 'Atribut :attribute hanya boleh berisi huruf.',
+    'alpha_dash' => 'Atribut :attribute hanya boleh berisi huruf, angka, strip dan underscore.',
+    'alpha_num' => 'Atribut :attribute hanya boleh berisi huruf dan angka.',
+    'array' => 'Atribut :attribute harus berupa array.',
+    'before' => 'Atribut :attribute harus tanggal sebelum :date.',
+    'before_or_equal' => 'Atribut :attribute harus tanggal sebelum atau sama dengan :date.',
+    'between' => [
+        'numeric' => 'Atribut :attribute harus antara :min dan :max.',
+        'file' => 'Atribut :attribute harus antara :min dan :max kilobita.',
+        'string' => 'Atribut :attribute harus antara :min dan :max karakter.',
+        'array' => 'Atribut :attribute harus antara :min dan :max item.',
+    ],
+    'boolean' => 'Field :attribute harus benar atau salah.',
+    'confirmed' => 'Konfirmasi :attribute tidak cocok.',
+    'date' => 'Atribut :attribute bukan tanggal yang valid.',
+    'email' => 'Atribut :attribute harus berupa alamat email yang valid.',
+    'filled' => 'Field :attribute harus memiliki nilai.',
+    'max' => [
+        'numeric' => 'Atribut :attribute tidak boleh lebih besar dari :max.',
+        'file' => 'Atribut :attribute tidak boleh lebih besar dari :max kilobita.',
+        'string' => 'Atribut :attribute tidak boleh lebih besar dari :max karakter.',
+        'array' => 'Atribut :attribute tidak boleh memiliki lebih dari :max item.',
+    ],
+    'min' => [
+        'numeric' => 'Atribut :attribute minimal :min.',
+        'file' => 'Atribut :attribute minimal :min kilobita.',
+        'string' => 'Atribut :attribute minimal :min karakter.',
+        'array' => 'Atribut :attribute harus memiliki minimal :min item.',
+    ],
+    'numeric' => 'Atribut :attribute harus berupa angka.',
+    'required' => 'Atribut :attribute wajib diisi.',
+    'string' => 'Atribut :attribute harus berupa string.',
+    'unique' => 'Atribut :attribute sudah ada sebelumnya.',
+    'date_format' => 'Atribut :attribute tidak sesuai format :format.',
+
+    'attributes' => [
+        'name' => 'nama',
+        'email' => 'email',
+        'password' => 'kata sandi',
+        'nis' => 'NIS',
+        'phone' => 'telepon',
+        'kelas' => 'kelas',
+        'birth_date' => 'tanggal lahir',
+    ],
+];

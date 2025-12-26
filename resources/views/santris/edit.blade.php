@@ -1,0 +1,126 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl">{{ __('Edit Santri') }}</h2>
+    </x-slot>
+
+    <div class="py-6">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <form method="POST" action="{{ route('santris.update', $santri) }}">
+                @csrf
+                @method('PUT')
+
+                {{-- client-side flash area --}}
+                <div id="form-flash" class="hidden max-w-4xl mx-auto mb-4 px-4">
+                    <div id="form-flash-message" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded" role="alert"></div>
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="nis" :value="__('NIS')" />
+                    <x-text-input id="nis" class="block mt-1 w-full" type="text" name="nis" value="{{ old('nis', $santri->nis) }}" />
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="name" :value="__('Name')" />
+                    <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" value="{{ old('name', $santri->name) }}" required />
+                    @error('name')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                    <p id="error-name" class="text-red-600 text-sm mt-1 hidden"></p>
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="email" :value="__('Email')" />
+                    <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" value="{{ old('email', $santri->email) }}" />
+                    @error('email')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                    <p id="error-email" class="text-red-600 text-sm mt-1 hidden"></p>
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="phone" :value="__('Phone')" />
+                    <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" value="{{ old('phone', $santri->phone) }}" />
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="kelas" :value="__('Kelas')" />
+                    <x-text-input id="kelas" class="block mt-1 w-full" type="text" name="kelas" value="{{ old('kelas', $santri->kelas) }}" />
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="birth_date" :value="__('Birth date')" />
+                    <x-text-input id="birth_date" class="block mt-1 w-full" type="date" name="birth_date" value="{{ old('birth_date', $santri->birth_date ? $santri->birth_date->format('Y-m-d') : '') }}" />
+                </div>
+
+                <div>
+                    <div class="flex items-center space-x-3">
+                        <x-primary-button>{{ __('Update') }}</x-primary-button>
+
+                        <a href="{{ route('santris.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-200">
+                            {{ __('Back') }}
+                        </a>
+
+                        <form method="POST" action="{{ route('santris.destroy', $santri) }}" onsubmit="return confirm('Are you sure you want to delete this Santri? This action cannot be undone.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded text-sm hover:bg-red-700">
+                                {{ __('Delete') }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function(){
+            const form = document.querySelector('form[action="{{ route('santris.update', $santri) }}"]');
+            if(!form) return;
+
+            function showFieldError(id, message){
+                const el = document.getElementById(id);
+                if(!el) return;
+                el.textContent = message;
+                el.classList.remove('hidden');
+            }
+            function clearFieldError(id){
+                const el = document.getElementById(id);
+                if(!el) return;
+                el.textContent = '';
+                el.classList.add('hidden');
+            }
+            function showFormFlash(msg){
+                const container = document.getElementById('form-flash');
+                const message = document.getElementById('form-flash-message');
+                if(!container || !message) return;
+                message.textContent = msg;
+                container.classList.remove('hidden');
+                setTimeout(()=> container.classList.add('hidden'), 5000);
+            }
+
+            form.addEventListener('submit', function(e){
+                // clear previous
+                clearFieldError('error-name');
+                clearFieldError('error-email');
+
+                const name = document.getElementById('name');
+                const email = document.getElementById('email');
+
+                let hasError = false;
+                if(!name || !name.value.trim()){
+                    showFieldError('error-name', 'Name is required');
+                    hasError = true;
+                }
+                if(email && email.value.trim()){
+                    const re = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+                    if(!re.test(email.value.trim())){
+                        showFieldError('error-email', 'Please enter a valid email address');
+                        hasError = true;
+                    }
+                }
+
+                if(hasError){
+                    e.preventDefault();
+                    showFormFlash('Please correct the highlighted errors and try again.');
+                }
+            });
+        })();
+    </script>
+</x-app-layout>

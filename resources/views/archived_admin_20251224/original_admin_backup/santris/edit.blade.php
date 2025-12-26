@@ -1,0 +1,48 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl">{{ __('Edit Santri') }}</h2>
+    </x-slot>
+
+    <div class="py-6">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <form method="POST" action="{{ route('santris.update', $santri) }}">
+                @csrf
+                @method('PUT')
+
+                <div class="mb-4">
+                    <x-input-label for="nis" :value="__('NIS')" />
+                    <x-text-input id="nis" class="block mt-1 w-full" type="text" name="nis" value="{{ old('nis', $santri->nis) }}" />
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="name" :value="__('Name')" />
+                    <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" value="{{ old('name', $santri->name) }}" required />
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="email" :value="__('Email')" />
+                    <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" value="{{ old('email', $santri->email) }}" />
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="phone" :value="__('Phone')" />
+                    <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" value="{{ old('phone', $santri->phone) }}" />
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="kelas" :value="__('Kelas')" />
+                    <x-text-input id="kelas" class="block mt-1 w-full" type="text" name="kelas" value="{{ old('kelas', $santri->kelas) }}" />
+                </div>
+
+                <div class="mb-4">
+                    <x-input-label for="birth_date" :value="__('Birth date')" />
+                    <x-text-input id="birth_date" class="block mt-1 w-full" type="date" name="birth_date" value="{{ old('birth_date', $santri->birth_date ? $santri->birth_date->format('Y-m-d') : '') }}" />
+                </div>
+
+                <div>
+                    <x-primary-button>{{ __('Update') }}</x-primary-button>
+                </div>
+            </form>
+        </div>
+    </div>
+</x-app-layout>

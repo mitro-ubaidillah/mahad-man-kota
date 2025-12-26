@@ -20,7 +20,7 @@ class UserController extends Controller
 
         $users = User::orderBy('id', 'desc')->paginate($perPage)->withQueryString();
 
-        return view('admin.users.index', compact('users', 'perPage'));
+        return view('users.index', compact('users', 'perPage'));
     }
 
     /**
@@ -28,7 +28,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('admin.users.create');
+        return view('users.create');
     }
 
     /**
@@ -48,7 +48,7 @@ class UserController extends Controller
 
         User::create($data);
 
-        return redirect()->route('admin.users.index')->with('success','User created');
+    return redirect()->route('users.index')->with('success','User created');
     }
 
     /**
@@ -56,7 +56,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return redirect()->route('admin.users.edit',$user);
+    return redirect()->route('users.edit',$user);
     }
 
     /**
@@ -64,7 +64,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('admin.users.edit', compact('user'));
+    return view('users.edit', compact('user'));
     }
 
     /**
@@ -89,7 +89,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('admin.users.index')->with('success','User updated');
+    return redirect()->route('users.index')->with('success','User updated');
     }
 
     /**
@@ -102,7 +102,7 @@ class UserController extends Controller
         }
 
         $user->delete();
-        return redirect()->route('admin.users.index')->with('success','User deleted');
+    return redirect()->route('users.index')->with('success','User deleted');
     }
 
     /**

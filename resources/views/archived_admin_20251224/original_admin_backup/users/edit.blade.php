@@ -5,7 +5,7 @@
 
     <div class="py-6">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <form method="POST" action="{{ route('admin.users.update', $user) }}">
+            <form method="POST" action="{{ route('users.update', $user) }}">
                 @csrf
                 @method('PUT')
 
@@ -44,7 +44,7 @@
     </div>
     <script>
         (function(){
-            const checkUrl = '{{ route('admin.users.check-email') }}';
+            const checkUrl = '{{ route('users.check-email') }}';
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             let debounceTimer;
             const currentUserId = '{{ $user->id }}';
