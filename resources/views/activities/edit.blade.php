@@ -98,9 +98,11 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-end space-x-3">
-                        <a href="{{ route('activities.index') }}" class="px-4 py-2 bg-gray-100 rounded">Batal</a>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+                    <div class="flex justify-between items-center space-x-3">
+                        <a href="{{ route('activities.index') }}" class="px-4 py-2 bg-gray-100 rounded">Kembali</a>
+                        <div class="flex space-x-3">
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+                        </div>
                     </div>
                 </form>
             </div>
