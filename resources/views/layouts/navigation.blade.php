@@ -19,7 +19,7 @@
                     @auth
                         @admin
                             <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                                {{ __('Users') }}
+                                {{ __('Admin') }}
                             </x-nav-link>
                             <x-nav-link :href="route('kelas.index')" :active="request()->routeIs('kelas.*')">
                                 {{ __('Kelas') }}
@@ -27,7 +27,7 @@
                         @endadmin
 
                         <x-nav-link :href="route('santris.index')" :active="request()->routeIs('santris.*')">
-                            {{ __('Santris') }}
+                            {{ __('Santri') }}
                         </x-nav-link>
                         <x-nav-link :href="route('activities.index')" :active="request()->routeIs('activities.*')">
                             {{ __('Kegiatan') }}

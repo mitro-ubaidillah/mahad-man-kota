@@ -54,7 +54,8 @@
                     <x-text-input id="birth_date" class="block mt-1 w-full" type="date" name="birth_date" />
                 </div>
 
-                <div>
+                <div class="flex items-center justify-between mt-4">
+                    <a href="{{ route('santris.index') }}" class="px-4 py-2 bg-gray-100 rounded">Kembali</a>
                     <x-primary-button>{{ __('Create') }}</x-primary-button>
                 </div>
             </form>

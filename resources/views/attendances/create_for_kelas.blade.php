@@ -93,9 +93,11 @@
         })();
     </script>
 
-                    <div class="flex justify-end space-x-3">
-                        <a href="{{ route('attendances.index') }}" class="px-4 py-2 bg-gray-100 rounded">Batal</a>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Simpan Absensi</button>
+                    <div class="flex justify-between items-center space-x-3 mt-4">
+                        <a href="{{ route('attendances.index') }}" class="px-4 py-2 bg-gray-100 rounded">Kembali</a>
+                        <div class="flex space-x-3">
+                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Simpan Absensi</button>
+                        </div>
                     </div>
                 </form>
             </div>

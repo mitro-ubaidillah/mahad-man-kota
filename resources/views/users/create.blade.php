@@ -46,7 +46,8 @@
                     </label>
                 </div>
 
-                <div>
+                <div class="flex items-center justify-between mt-4">
+                    <a href="{{ route('users.index') }}" class="px-4 py-2 bg-gray-100 rounded">Kembali</a>
                     <x-primary-button id="submit-btn">{{ __('Create') }}</x-primary-button>
                 </div>
             </form>

@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl">{{ __('Users') }}</h2>
+        <h2 class="font-semibold text-xl">{{ __('Admin') }}</h2>
     </x-slot>
 
     <div class="py-6" x-data="{ confirmOpen: false, confirmEmail: '', confirmFormId: null, openConfirm(email, formId){ this.confirmEmail = email; this.confirmFormId = formId; this.confirmOpen = true }, doConfirm(){ if(this.confirmFormId){ document.getElementById(this.confirmFormId).submit(); } this.confirmOpen = false } }">
@@ -8,7 +8,7 @@
             @php $currentUser = auth()->user(); @endphp
             <div class="mb-4 flex items-center justify-between">
                 @if($currentUser && $currentUser->is_admin)
-                    <a href="{{ route('users.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded">Tambah User</a>
+                    <a href="{{ route('users.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded">Tambah Admin</a>
                 @else
                     <div></div>
                 @endif
@@ -32,7 +32,7 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Admin</th>
