@@ -23,13 +23,25 @@
                 </div>
 
                 <div class="flex items-center space-x-4">
-                    <form method="GET" action="{{ route('santris.index') }}" id="per-page-form">
-                        <label for="per_page" class="text-sm text-gray-600 mr-2">Per page</label>
-                        <select name="per_page" id="per_page" class="border rounded px-2 py-1" onchange="document.getElementById('per-page-form').submit()">
-                            @foreach([10,20,50,100] as $n)
-                                <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }}</option>
-                            @endforeach
-                        </select>
+                    <form method="GET" action="{{ route('santris.index') }}" id="filter-form" class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2">
+                            <label for="kelas_id" class="text-sm text-gray-600">Kelas</label>
+                            <select name="kelas_id" id="kelas_id" class="border rounded px-2 py-1" onchange="document.getElementById('filter-form').submit()">
+                                <option value="">Semua</option>
+                                @foreach($kelasList as $k)
+                                    <option value="{{ $k->id }}" {{ isset($selectedKelasId) && (string)$selectedKelasId === (string)$k->id ? 'selected' : '' }}>{{ $k->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="flex items-center space-x-2">
+                            <label for="per_page" class="text-sm text-gray-600">Per page</label>
+                            <select name="per_page" id="per_page" class="border rounded px-2 py-1" onchange="document.getElementById('filter-form').submit()">
+                                @foreach([10,20,50,100] as $n)
+                                    <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </form>
                     <div class="text-sm text-gray-600">Showing {{ $santris->firstItem() ?? 0 }} to {{ $santris->lastItem() ?? 0 }} of {{ $santris->total() }}</div>
                 </div>

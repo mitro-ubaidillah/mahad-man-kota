@@ -8,6 +8,8 @@ use App\Models\Santri;
 use App\Models\Kelas;
 use App\Services\SantriImportService;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SantriController extends Controller
 {
@@ -19,8 +21,29 @@ class SantriController extends Controller
 
     public function index(Request $request)
     {
-        $santris = Santri::with('kelas')->orderBy('name')->paginate(20);
-        return view('santris.index', compact('santris'));
+        $query = Santri::with('kelas');
+
+        $selectedKelasId = $request->input('kelas_id');
+        if ($selectedKelasId) {
+            $query->where('kelas_id', $selectedKelasId);
+        }
+
+        $perPage = (int) $request->input('per_page', 20);
+        if ($perPage < 1) {
+            $perPage = 10;
+        } elseif ($perPage > 100) {
+            $perPage = 100;
+        }
+
+        $santris = $query->orderBy('name')->paginate($perPage)->withQueryString();
+        $kelasList = Kelas::orderBy('name')->get();
+
+        return view('santris.index', [
+            'santris' => $santris,
+            'kelasList' => $kelasList,
+            'perPage' => $perPage,
+            'selectedKelasId' => $selectedKelasId,
+        ]);
     }
 
     public function create()
@@ -116,5 +139,45 @@ class SantriController extends Controller
         session()->flash('success', $message);
 
         return redirect()->route('santris.index');
+    }
+
+    /**
+     * Download an Excel (XLSX) template for santri import.
+     */
+    public function downloadTemplate()
+    {
+        $filename = 'template_import_santri.xlsx';
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header row matching expected columns
+        $sheet->setCellValue('A1', 'nis');
+        $sheet->setCellValue('B1', 'name');
+        $sheet->setCellValue('C1', 'email');
+        $sheet->setCellValue('D1', 'phone');
+        $sheet->setCellValue('E1', 'kelas');
+        $sheet->setCellValue('F1', 'birth_date');
+
+        // Example row (optional)
+        $sheet->setCellValue('A2', '12345');
+        $sheet->setCellValue('B2', 'Contoh Nama');
+        $sheet->setCellValue('C2', 'email@example.com');
+        $sheet->setCellValue('D2', '08123456789');
+        $sheet->setCellValue('E2', 'Kelas A');
+        $sheet->setCellValue('F2', '2005-01-01');
+
+        // Auto-size columns
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 }

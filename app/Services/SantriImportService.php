@@ -29,7 +29,8 @@ class SantriImportService
                 $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file->getRealPath());
                 $spreadsheet = $reader->load($file->getRealPath());
                 $sheet = $spreadsheet->getActiveSheet();
-                $rows = $sheet->toArray();
+                // Use formatted values so dates and numbers come through as readable strings
+                $rows = $sheet->toArray(null, true, true, false);
 
                 // write to temp CSV
                 $tmp = tmpfile();
