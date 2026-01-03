@@ -33,4 +33,8 @@
     ,
     "Imported :count rows": "Mengimpor :count baris",
     "with :count errors": "dengan :count kesalahan"
+    ,
+    "Kelas created": "Kelas berhasil dibuat",
+    "Kelas updated": "Kelas berhasil diperbarui",
+    "Kelas deleted": "Kelas berhasil dihapus"
 }

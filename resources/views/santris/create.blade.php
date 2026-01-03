@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto sm:p-6 lg:p-8 bg-white shadow-sm rounded-lg">
             <form method="POST" action="{{ route('santris.store') }}">
                 @csrf
 
@@ -38,8 +38,15 @@
                 </div>
 
                 <div class="mb-4">
-                    <x-input-label for="kelas" :value="__('Kelas')" />
-                    <x-text-input id="kelas" class="block mt-1 w-full" type="text" name="kelas" />
+                    <x-input-label for="kelas_id" :value="__('Kelas')" />
+                    <select id="kelas_id" name="kelas_id" class="block mt-1 w-full border rounded px-3 py-2">
+                        <option value="">-- Pilih Kelas --</option>
+                        @foreach($kelasList as $k)
+                            <option value="{{ $k->id }}" {{ old('kelas_id') == $k->id ? 'selected' : '' }}>{{ $k->name }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-sm text-gray-500 mt-1">Atau masukkan nama kelas baru (akan membuat kelas baru):</p>
+                    <x-text-input id="kelas_name" class="block mt-1 w-full" type="text" name="kelas_name" value="{{ old('kelas_name') }}" />
                 </div>
 
                 <div class="mb-4">

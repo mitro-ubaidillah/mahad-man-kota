@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\SantriController as AdminSantriController;
+use App\Http\Controllers\Admin\KelasController as AdminKelasController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,8 +25,42 @@ Route::get('/', function () {
         : redirect()->route('login');
 });
 
+use App\Models\Santri;
+use App\Models\Activity;
+use App\Models\Attendance;
+use App\Models\User;
+use Illuminate\Support\Carbon;
+
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    // Counts
+    $santriCount = Santri::count();
+    $activityCount = Activity::count();
+    $adminCount = User::where('is_admin', true)->count();
+
+    // Weekly attendance (last 7 days) - count of present per day
+    $today = Carbon::today();
+    $weeklyLabels = [];
+    $weeklyData = [];
+    for ($i = 6; $i >= 0; $i--) {
+        $date = $today->copy()->subDays($i);
+        $weeklyLabels[] = $date->format('D');
+        $count = Attendance::whereDate('created_at', $date)->where('status', 'present')->count();
+        $weeklyData[] = $count;
+    }
+
+    // Growth (santri created per month for last 6 months)
+    $growthLabels = [];
+    $growthData = [];
+    for ($m = 5; $m >= 0; $m--) {
+        $dt = $today->copy()->subMonths($m);
+        $label = $dt->format('M');
+        $growthLabels[] = $label;
+        $start = $dt->copy()->startOfMonth();
+        $end = $dt->copy()->endOfMonth();
+        $growthData[] = Santri::whereBetween('created_at', [$start, $end])->count();
+    }
+
+    return view('dashboard', compact('santriCount','activityCount','adminCount','weeklyLabels','weeklyData','growthLabels','growthData'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -36,16 +71,49 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-// User management (only for admin/root)
+// Admin-only management routes (users, kelas, santris, activities, restricted attendance ops)
 Route::middleware(['auth','is_admin'])->group(function () {
+    // User management (except index, which is visible to all authenticated users)
     Route::post('users/check-email', [AdminUserController::class, 'checkEmail'])->name('users.check-email');
-    Route::resource('users', AdminUserController::class);
-});
+    Route::resource('users', AdminUserController::class)->except(['index']);
 
-// Santri management (for authenticated users)
-Route::middleware(['auth'])->group(function () {
-    // Import template download and import endpoint
+    // Kelas (class) management for admins (except index)
+    // Use "kelas" as the route parameter name to avoid the default singular "kela"
+    Route::resource('kelas', AdminKelasController::class)
+        ->parameters(['kelas' => 'kelas'])
+        ->except(['index']);
+
+    // Santri management (CRUD + import) only for admins (except index)
     Route::get('santris/import-template', [AdminSantriController::class, 'downloadTemplate'])->name('santris.import-template');
     Route::post('santris/import', [AdminSantriController::class, 'import'])->name('santris.import');
-    Route::resource('santris', AdminSantriController::class);
+    Route::resource('santris', AdminSantriController::class)->except(['index']);
+
+    // Activity management only for admins (except index)
+    Route::resource('activities', App\Http\Controllers\Admin\ActivityController::class)->except(['index']);
+
+    // Attendance destroy restricted to admins (other ops allowed for all authenticated users)
+    Route::delete('attendances/{attendance}', [App\Http\Controllers\Admin\AttendanceController::class, 'destroy'])
+        ->name('attendances.destroy');
+});
+
+// Attendance usage + read-only listings (for all authenticated users)
+Route::middleware(['auth'])->group(function () {
+    // Read-only index pages for non-admins
+    Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('kelas', [AdminKelasController::class, 'index'])->name('kelas.index');
+    Route::get('santris', [AdminSantriController::class, 'index'])->name('santris.index');
+    Route::get('activities', [App\Http\Controllers\Admin\ActivityController::class, 'index'])->name('activities.index');
+
+    // Export recap
+    Route::get('attendances/export', [App\Http\Controllers\Admin\AttendanceController::class, 'export'])->name('attendances.export');
+
+    // Attendance CRUD except destroy (destroy handled in admin group above)
+    Route::resource('attendances', App\Http\Controllers\Admin\AttendanceController::class)
+        ->except(['destroy']);
+
+    // AJAX helper to fetch santris for a kelas
+    Route::get('kelas/{kelas}/santris', [App\Http\Controllers\Admin\AttendanceController::class, 'santrisForKelas'])->name('kelas.santris');
+    // Class-based attendance: take attendance for an entire kelas
+    Route::get('attendances/kelas/{kelas}/create', [App\Http\Controllers\Admin\AttendanceController::class, 'createForKelas'])->name('attendances.createForKelas');
+    Route::post('attendances/kelas/{kelas}', [App\Http\Controllers\Admin\AttendanceController::class, 'storeForKelas'])->name('attendances.storeForKelas');
 });

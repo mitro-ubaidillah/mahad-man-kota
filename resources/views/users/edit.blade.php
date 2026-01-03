@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto sm:p-6 lg:p-8 bg-white shadow-sm rounded-lg">
             <form method="POST" action="{{ route('users.update', $user) }}">
                 @csrf
                 @method('PUT')
@@ -31,7 +31,8 @@
 
                 <div class="mb-4">
                     <label class="inline-flex items-center">
-                        <input type="checkbox" name="is_admin" class="form-checkbox" {{ $user->is_admin ? 'checked' : '' }}>
+                        <input type="hidden" name="is_admin" value="0">
+                        <input type="checkbox" name="is_admin" value="1" class="form-checkbox" {{ old('is_admin', $user->is_admin ? 1 : 0) == 1 ? 'checked' : '' }}>
                         <span class="ml-2">Is Admin</span>
                     </label>
                 </div>

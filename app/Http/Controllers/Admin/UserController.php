@@ -40,11 +40,10 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-            'is_admin' => 'sometimes|boolean',
+            'is_admin' => 'required|boolean',
         ]);
 
         $data['password'] = Hash::make($data['password']);
-        $data['is_admin'] = $request->has('is_admin') ? (bool)$request->is_admin : false;
 
         User::create($data);
 
@@ -76,7 +75,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => "required|email|unique:users,email,{$user->id}",
             'password' => 'nullable|string|min:6|confirmed',
-            'is_admin' => 'sometimes|boolean',
+            'is_admin' => 'required|boolean',
         ]);
 
         if ($request->filled('password')) {
@@ -84,8 +83,6 @@ class UserController extends Controller
         } else {
             unset($data['password']);
         }
-
-        $data['is_admin'] = $request->has('is_admin') ? (bool)$request->is_admin : false;
 
         $user->update($data);
 
@@ -97,8 +94,17 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if ($user->email === 'root@root.com') {
-            return redirect()->back()->with('error','Cannot delete root user.');
+        // Prevent deleting the seeded root user (centralized in the model)
+        if (method_exists($user, 'isRoot') && $user->isRoot()) {
+            return redirect()->back()->with('error', 'Cannot delete root user.');
+        }
+
+        // If the current user is not root, prevent deleting admin accounts
+        $current = auth()->user();
+        if (! ($current && method_exists($current, 'isRoot') && $current->isRoot())) {
+            if ($user->is_admin) {
+                return redirect()->back()->with('error', 'Cannot delete admin user. Only root can delete admin accounts.');
+            }
         }
 
         $user->delete();

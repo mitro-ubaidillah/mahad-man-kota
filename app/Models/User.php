@@ -44,4 +44,22 @@ class User extends Authenticatable
         'password' => 'hashed',
         'is_admin' => 'boolean',
     ];
+
+    /**
+     * Determine if this user is the seeded root user.
+     * Uses application config fallback to 'root@root.com'.
+     */
+    public function isRoot(): bool
+    {
+        $rootEmail = config('app.root_email', 'root@root.com');
+        return strtolower($this->email) === strtolower($rootEmail);
+    }
+
+    /**
+     * Attribute accessor for `is_root` to use in Blade templates easily.
+     */
+    public function getIsRootAttribute(): bool
+    {
+        return $this->isRoot();
+    }
 }

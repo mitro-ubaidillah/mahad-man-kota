@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                        <x-application-logo class="block fill-current text-gray-800 w-auto h-[80px]" />
                     </a>
                 </div>
 
@@ -21,10 +21,19 @@
                             <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                                 {{ __('Users') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('kelas.index')" :active="request()->routeIs('kelas.*')">
+                                {{ __('Kelas') }}
+                            </x-nav-link>
                         @endadmin
 
                         <x-nav-link :href="route('santris.index')" :active="request()->routeIs('santris.*')">
                             {{ __('Santris') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('activities.index')" :active="request()->routeIs('activities.*')">
+                            {{ __('Kegiatan') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.*')">
+                            {{ __('Absensi') }}
                         </x-nav-link>
                     @endauth
                 </div>
@@ -120,10 +129,19 @@
                         <x-responsive-nav-link :href="route('users.index')">
                             {{ __('Users') }}
                         </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('kelas.index')">
+                            {{ __('Kelas') }}
+                        </x-responsive-nav-link>
                     @endadmin
 
                     <x-responsive-nav-link :href="route('santris.index')">
                         {{ __('Santris') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('activities.index')">
+                        {{ __('Kegiatan') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('attendances.index')">
+                        {{ __('Absensi') }}
                     </x-responsive-nav-link>
 
                     <!-- Authentication -->
