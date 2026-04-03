@@ -152,20 +152,20 @@ class SantriController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
 
         // Header row matching expected columns
-        $sheet->setCellValue('A1', 'nis');
-        $sheet->setCellValue('B1', 'name');
-        $sheet->setCellValue('C1', 'email');
-        $sheet->setCellValue('D1', 'phone');
-        $sheet->setCellValue('E1', 'kelas');
-        $sheet->setCellValue('F1', 'birth_date');
+        $sheet->setCellValue('A1', 'NIS');
+        $sheet->setCellValue('B1', 'Nama Lengkap');
+        $sheet->setCellValue('C1', 'Email');
+        $sheet->setCellValue('D1', 'Nomor HP');
+        $sheet->setCellValue('E1', 'Nama Kelas');
+        $sheet->setCellValue('F1', 'Tanggal Lahir');
 
         // Example row (optional)
-        $sheet->setCellValue('A2', '12345');
-        $sheet->setCellValue('B2', 'Contoh Nama');
-        $sheet->setCellValue('C2', 'email@example.com');
-        $sheet->setCellValue('D2', '08123456789');
-        $sheet->setCellValue('E2', 'Kelas A');
-        $sheet->setCellValue('F2', '2005-01-01');
+        $sheet->setCellValue('A2', '123456');
+        $sheet->setCellValue('B2', 'Ahmad Faris');
+        $sheet->setCellValue('C2', 'ahmad@example.com');
+        $sheet->setCellValue('D2', '081234567890');
+        $sheet->setCellValue('E2', 'Kelas 10 IPA 1');
+        $sheet->setCellValue('F2', '2005-01-15');
 
         // Auto-size columns
         foreach (range('A', 'F') as $col) {

@@ -1,18 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl">{{ __('Edit Absensi') }}</h2>
+        {{ __('Edit Absensi') }}
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow sm:rounded-lg p-6">
-                <form method="POST" action="{{ route('attendances.update', $attendance) }}">
-                    @csrf
-                    @method('PUT')
+    <div class="max-w-3xl">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Form Edit Absensi</h2>
 
-                    <div class="mb-4">
-                        <label for="activity_id" class="block text-sm font-medium text-gray-700">Kegiatan</label>
-                        <select id="activity_id" name="activity_id" class="mt-1 block w-full border rounded px-3 py-2">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <form method="POST" action="{{ route('attendances.update', $attendance) }}">
+                @csrf
+                @method('PUT')
+
+                <div class="space-y-4">
+                    <div>
+                        <label for="activity_id" class="block text-sm font-medium text-gray-700 mb-1">Kegiatan</label>
+                        <select id="activity_id" name="activity_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                             <option value="">-- Pilih Kegiatan --</option>
                             @foreach($activities as $act)
                                 @php
@@ -29,48 +31,46 @@
                                 <option value="{{ $act->id }}" {{ old('activity_id', $attendance->activity_id) == $act->id ? 'selected' : '' }}>{{ $act->title }} ({{ $label }}{{ $act->time ? ' '.$act->time : '' }})</option>
                             @endforeach
                         </select>
-                        <p id="error-activity_id" class="text-sm text-red-600 hidden"></p>
-                        @error('activity_id') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+                        <p id="error-activity_id" class="text-sm text-red-600 hidden mt-1"></p>
+                        @error('activity_id') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="mb-4">
-                        <label for="santri_id" class="block text-sm font-medium text-gray-700">Santri</label>
-                        <select id="santri_id" name="santri_id" class="mt-1 block w-full border rounded px-3 py-2">
+                    <div>
+                        <label for="santri_id" class="block text-sm font-medium text-gray-700 mb-1">Santri</label>
+                        <select id="santri_id" name="santri_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                             <option value="">-- Pilih Santri --</option>
                             @foreach($santris as $s)
                                 <option value="{{ $s->id }}" {{ old('santri_id', $attendance->santri_id) == $s->id ? 'selected' : '' }}>{{ $s->name }} ({{ $s->nis }})</option>
                             @endforeach
                         </select>
-                        <p id="error-santri_id" class="text-sm text-red-600 hidden"></p>
-                        @error('santri_id') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+                        <p id="error-santri_id" class="text-sm text-red-600 hidden mt-1"></p>
+                        @error('santri_id') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="mb-4">
-                        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select id="status" name="status" class="mt-1 block w-full border rounded px-3 py-2">
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select id="status" name="status" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                             @foreach(['present' => 'Hadir', 'absent' => 'Tidak Hadir', 'late' => 'Terlambat'] as $k=>$v)
                                 <option value="{{ $k }}" {{ old('status', $attendance->status) == $k ? 'selected' : '' }}>{{ $v }}</option>
                             @endforeach
                         </select>
-                        <p id="error-status" class="text-sm text-red-600 hidden"></p>
-                        @error('status') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+                        <p id="error-status" class="text-sm text-red-600 hidden mt-1"></p>
+                        @error('status') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="mb-4">
-                        <label for="note" class="block text-sm font-medium text-gray-700">Catatan (opsional)</label>
-                        <input id="note" type="text" name="note" value="{{ old('note', $attendance->note) }}" class="mt-1 block w-full border rounded px-3 py-2" />
-                        <p id="error-note" class="text-sm text-red-600 hidden"></p>
-                        @error('note') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+                    <div>
+                        <label for="note" class="block text-sm font-medium text-gray-700 mb-1">Catatan (opsional)</label>
+                        <input id="note" type="text" name="note" value="{{ old('note', $attendance->note) }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                        <p id="error-note" class="text-sm text-red-600 hidden mt-1"></p>
+                        @error('note') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="flex justify-between items-center space-x-3">
-                        <a href="{{ route('attendances.index') }}" class="px-4 py-2 bg-gray-100 rounded">Kembali</a>
-                        <div class="flex space-x-3">
-                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
-                        </div>
+                    <div class="flex justify-end gap-3 pt-5 border-t border-gray-100">
+                        <a href="{{ route('attendances.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">Kembali</a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition">Simpan Perubahan</button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
     <script>

@@ -47,6 +47,7 @@ return [
         'nis' => 'NIS',
         'phone' => 'telepon',
         'kelas' => 'kelas',
+        'kelas_id' => 'kelas',
         'birth_date' => 'tanggal lahir',
     ],
 ];

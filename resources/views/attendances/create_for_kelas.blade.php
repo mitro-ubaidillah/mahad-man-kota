@@ -1,17 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl">{{ __('Absensi per Kelas') }} - {{ $kelas->name }}</h2>
+        {{ __('Absensi per Kelas') }} - {{ $kelas->name }}
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow sm:rounded-lg p-6">
-                <form method="POST" action="{{ route('attendances.storeForKelas', $kelas->id) }}">
-                    @csrf
+    <div class="max-w-6xl">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Form Absensi Kelas {{ $kelas->name }}</h2>
 
-                    <div class="mb-4">
-                        <label for="activity_id" class="block text-sm font-medium text-gray-700">Pilih Kegiatan (opsional)</label>
-                        <select id="activity_id" name="activity_id" class="mt-1 block w-full border rounded px-3 py-2">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <form method="POST" action="{{ route('attendances.storeForKelas', $kelas->id) }}">
+                @csrf
+
+                <div class="space-y-4">
+                    <div>
+                        <label for="activity_id" class="block text-sm font-medium text-gray-700 mb-1">Pilih Kegiatan (opsional)</label>
+                        <select id="activity_id" name="activity_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                             <option value="">-- Buat kegiatan baru --</option>
                             @foreach($activities as $a)
                                 <option value="{{ $a->id }}">{{ $a->title }} ({{ $a->displaySchedule() }})</option>
@@ -19,63 +21,72 @@
                         </select>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="activity_title" class="block text-sm font-medium text-gray-700">Judul Kegiatan (jika membuat baru)</label>
-                        <input id="activity_title" name="activity_title" class="mt-1 block w-full border rounded px-3 py-2" />
+                    <div>
+                        <label for="activity_title" class="block text-sm font-medium text-gray-700 mb-1">Judul Kegiatan (jika membuat baru)</label>
+                        <input id="activity_title" name="activity_title" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
                     </div>
 
-                    <div class="mb-4">
-                        <label for="activity_date" class="block text-sm font-medium text-gray-700">Tanggal Kegiatan (opsional)</label>
-                        <input id="activity_date" name="activity_date" type="date" class="mt-1 block w-full border rounded px-3 py-2" />
+                    <div>
+                        <label for="activity_date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Kegiatan (opsional)</label>
+                        <input id="activity_date" name="activity_date" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
                     </div>
 
-                    <div class="mb-4">
+                    <div>
                         <div class="flex items-center justify-between mb-2">
                             <div class="text-sm font-medium text-gray-700">Daftar Santri</div>
                             <div class="flex items-center space-x-2">
                                 <label class="text-sm">Default status untuk semua:</label>
-                                <select id="default_status" class="block border rounded px-2 py-1 text-sm">
+                                <select id="default_status" class="block border border-gray-300 rounded-lg px-2 py-1 text-sm">
                                     <option value="">(tidak ada)</option>
                                     <option value="present">Hadir</option>
                                     <option value="absent">Tidak Hadir</option>
                                     <option value="sick">Sakit</option>
                                     <option value="izin">Izin</option>
                                 </select>
-                                <button type="button" id="apply_default" class="px-2 py-1 bg-gray-100 rounded text-sm">Terapkan</button>
+                                <button type="button" id="apply_default" class="inline-flex items-center px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-medium rounded-md transition">Terapkan</button>
                             </div>
                         </div>
 
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full border">
+                        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-3 py-2 border">#</th>
-                                        <th class="px-3 py-2 border">NIS</th>
-                                        <th class="px-3 py-2 border">Nama</th>
-                                        <th class="px-3 py-2 border">Masuk</th>
-                                        <th class="px-3 py-2 border">Tidak Masuk</th>
-                                        <th class="px-3 py-2 border">Sakit</th>
-                                        <th class="px-3 py-2 border">Izin</th>
-                                        <th class="px-3 py-2 border">Catatan</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIS</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                                        <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Masuk</th>
+                                        <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tidak Masuk</th>
+                                        <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Sakit</th>
+                                        <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Izin</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="divide-y divide-gray-100">
                                     @foreach($santris as $s)
-                                        <tr class="border-b">
-                                            <td class="px-3 py-2 border text-sm">{{ $loop->iteration }}</td>
-                                            <td class="px-3 py-2 border text-sm">{{ $s->nis }}</td>
-                                            <td class="px-3 py-2 border text-sm">{{ $s->name }}</td>
-                                            <td class="px-3 py-2 border text-center"><input type="radio" name="statuses[{{ $s->id }}]" value="present" checked></td>
-                                            <td class="px-3 py-2 border text-center"><input type="radio" name="statuses[{{ $s->id }}]" value="absent"></td>
-                                            <td class="px-3 py-2 border text-center"><input type="radio" name="statuses[{{ $s->id }}]" value="sick"></td>
-                                            <td class="px-3 py-2 border text-center"><input type="radio" name="statuses[{{ $s->id }}]" value="izin"></td>
-                                            <td class="px-3 py-2 border"><input type="text" name="notes[{{ $s->id }}]" placeholder="Catatan (opsional)" class="block w-full border rounded px-2 py-1 text-sm" /></td>
+                                        <tr>
+                                            <td class="px-3 py-2 text-sm text-gray-500">{{ $loop->iteration }}</td>
+                                            <td class="px-3 py-2 text-sm text-gray-600">{{ $s->nis }}</td>
+                                            <td class="px-3 py-2 text-sm text-gray-900 font-medium">{{ $s->name }}</td>
+                                            <td class="px-3 py-2 text-center"><input type="radio" name="statuses[{{ $s->id }}]" value="present" checked></td>
+                                            <td class="px-3 py-2 text-center"><input type="radio" name="statuses[{{ $s->id }}]" value="absent"></td>
+                                            <td class="px-3 py-2 text-center"><input type="radio" name="statuses[{{ $s->id }}]" value="sick"></td>
+                                            <td class="px-3 py-2 text-center"><input type="radio" name="statuses[{{ $s->id }}]" value="izin"></td>
+                                            <td class="px-3 py-2"><input type="text" name="notes[{{ $s->id }}]" placeholder="Catatan (opsional)" class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm" /></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
+                    <div class="flex justify-end gap-3 pt-5 border-t border-gray-100">
+                        <a href="{{ route('attendances.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">Kembali</a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition">Simpan Absensi</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
         (function(){
@@ -92,15 +103,4 @@
             });
         })();
     </script>
-
-                    <div class="flex justify-between items-center space-x-3 mt-4">
-                        <a href="{{ route('attendances.index') }}" class="px-4 py-2 bg-gray-100 rounded">Kembali</a>
-                        <div class="flex space-x-3">
-                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Simpan Absensi</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 </x-app-layout>

@@ -1,17 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl">{{ __('Tambah Absensi') }}</h2>
+        {{ __('Tambah Absensi') }}
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow sm:rounded-lg p-6">
-                <form method="POST" action="{{ route('attendances.store') }}">
-                    @csrf
+    <div class="max-w-4xl">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Form Tambah Absensi</h2>
 
-                    <div class="mb-4">
-                        <label for="activity_id" class="block text-sm font-medium text-gray-700">Kegiatan</label>
-                        <select id="activity_id" name="activity_id" class="mt-1 block w-full border rounded px-3 py-2">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <form method="POST" action="{{ route('attendances.store') }}">
+                @csrf
+
+                <div class="space-y-4">
+                    <div>
+                        <label for="activity_id" class="block text-sm font-medium text-gray-700 mb-1">Kegiatan</label>
+                        <select id="activity_id" name="activity_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                             <option value="">-- Pilih Kegiatan --</option>
                             @foreach($activities as $act)
                                 @php
@@ -28,52 +30,50 @@
                                 <option value="{{ $act->id }}" {{ old('activity_id') == $act->id ? 'selected' : '' }}>{{ $act->title }} ({{ $label }}{{ $act->time ? ' '.$act->time : '' }}) @if($act->kelas) - {{ $act->kelas->name }} @endif</option>
                             @endforeach
                         </select>
-                        <p id="error-activity_id" class="text-sm text-red-600 hidden"></p>
-                        @error('activity_id') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+                        <p id="error-activity_id" class="text-sm text-red-600 hidden mt-1"></p>
+                        @error('activity_id') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="mb-4">
-                        <label for="kelas_id" class="block text-sm font-medium text-gray-700">Kelas</label>
-                        <select id="kelas_id" name="kelas_id" class="mt-1 block w-full border rounded px-3 py-2">
+                    <div>
+                        <label for="kelas_id" class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                        <select id="kelas_id" name="kelas_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                             <option value="">-- Pilih Kelas (opsional) --</option>
                             @foreach($kelasList as $k)
                                 <option value="{{ $k->id }}">{{ $k->name }}</option>
                             @endforeach
                         </select>
-                        <p class="text-sm text-gray-500">Pilih kelas untuk memuat daftar santri (ditujukan untuk dataset besar).</p>
+                        <p class="text-xs text-gray-500 mt-1">Pilih kelas untuk memuat daftar santri (ditujukan untuk dataset besar).</p>
                     </div>
 
-                    <div class="mb-4" id="santri_area">
+                    <div id="santri_area">
                         <div class="flex items-center justify-between mb-2">
                             <div class="text-sm font-medium text-gray-700">Daftar Santri</div>
                             <div class="flex items-center space-x-2">
                                 <label for="default_status" class="text-sm">Default status untuk semua:</label>
-                                <select id="default_status" class="block border rounded px-2 py-1 text-sm">
+                                <select id="default_status" class="block border border-gray-300 rounded-lg px-2 py-1 text-sm">
                                     <option value="">(tidak ada)</option>
                                     <option value="present">Hadir</option>
                                     <option value="absent">Tidak Hadir</option>
                                     <option value="sick">Sakit</option>
                                     <option value="izin">Izin</option>
                                 </select>
-                                <button type="button" id="apply_default" class="px-2 py-1 bg-gray-100 rounded text-sm">Terapkan</button>
+                                <button type="button" id="apply_default" class="inline-flex items-center px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-medium rounded-md transition">Terapkan</button>
                             </div>
                         </div>
 
-                        <div id="santri_table_container" class="mt-2">
+                        <div id="santri_table_container" class="mt-2 border border-gray-200 rounded-lg p-3 bg-gray-50">
                             <div class="text-sm text-gray-500">Pilih kelas untuk memuat daftar santri dan menandai absensi.</div>
                         </div>
                     </div>
 
                     <!-- Status and note removed from single-attendance form; use kelas-based bulk attendance to set statuses -->
 
-                    <div class="flex justify-between items-center space-x-3">
-                        <a href="{{ route('attendances.index') }}" class="px-4 py-2 bg-gray-100 rounded">Kembali</a>
-                        <div class="flex space-x-3">
-                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
-                        </div>
+                    <div class="flex justify-end gap-3 pt-5 border-t border-gray-100">
+                        <a href="{{ route('attendances.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">Kembali</a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition">Simpan</button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
     <script>

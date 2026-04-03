@@ -47,7 +47,7 @@ class UserController extends Controller
 
         User::create($data);
 
-    return redirect()->route('users.index')->with('success','User created');
+    return redirect()->route('users.index')->with("success", __("User created"));
     }
 
     /**
@@ -86,7 +86,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-    return redirect()->route('users.index')->with('success','User updated');
+    return redirect()->route('users.index')->with("success", __("User updated"));
     }
 
     /**
@@ -96,19 +96,19 @@ class UserController extends Controller
     {
         // Prevent deleting the seeded root user (centralized in the model)
         if (method_exists($user, 'isRoot') && $user->isRoot()) {
-            return redirect()->back()->with('error', 'Cannot delete root user.');
+            return redirect()->back()->with("error", __("Cannot delete root user."));
         }
 
         // If the current user is not root, prevent deleting admin accounts
         $current = auth()->user();
         if (! ($current && method_exists($current, 'isRoot') && $current->isRoot())) {
             if ($user->is_admin) {
-                return redirect()->back()->with('error', 'Cannot delete admin user. Only root can delete admin accounts.');
+                return redirect()->back()->with("error", __("Cannot delete admin user. Only root can delete admin accounts."));
             }
         }
 
         $user->delete();
-    return redirect()->route('users.index')->with('success','User deleted');
+    return redirect()->route('users.index')->with("success", __("User deleted"));
     }
 
     /**

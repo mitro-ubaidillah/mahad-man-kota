@@ -81,12 +81,12 @@ class SantriImportService
                 }
             }
 
-            $nis = $row[0] ?? null;
-            $name = $row[1] ?? null;
-            $email = $row[2] ?? null;
-            $phone = $row[3] ?? null;
-            $kelasName = isset($row[4]) ? trim($row[4]) : null;
-            $birth = $row[5] ?? null;
+            $nis = isset($row[0]) && trim($row[0]) !== '' ? trim($row[0]) : null;
+            $name = isset($row[1]) && trim($row[1]) !== '' ? trim($row[1]) : null;
+            $email = isset($row[2]) && trim($row[2]) !== '' ? trim($row[2]) : null;
+            $phone = isset($row[3]) && trim($row[3]) !== '' ? trim($row[3]) : null;
+            $kelasName = isset($row[4]) && trim($row[4]) !== '' ? trim($row[4]) : null;
+            $birth = isset($row[5]) && trim($row[5]) !== '' ? trim($row[5]) : null;
 
             $kelasId = null;
             if ($kelasName) {

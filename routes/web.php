@@ -73,12 +73,30 @@ require __DIR__.'/auth.php';
 
 // Admin-only management routes (users, kelas, santris, activities, restricted attendance ops)
 Route::middleware(['auth','is_admin'])->group(function () {
+    // WhatsApp Gateway
+    Route::prefix('wa-gateway')->name('admin.wa-')->group(function() {
+        // Device
+        Route::get('/device', [App\Http\Controllers\Admin\WaDeviceController::class, 'index'])->name('device.index');
+        Route::post('/device', [App\Http\Controllers\Admin\WaDeviceController::class, 'store'])->name('device.store');
+        Route::get('/device/generate-qr', [App\Http\Controllers\Admin\WaDeviceController::class, 'generateQr'])->name('device.generate-qr');
+        Route::get('/device/check-status', [App\Http\Controllers\Admin\WaDeviceController::class, 'checkStatus'])->name('device.check-status');
+        Route::post('/device/logout', [App\Http\Controllers\Admin\WaDeviceController::class, 'logout'])->name('device.logout');
+
+        // Template
+        Route::resource('/template', App\Http\Controllers\Admin\WhatsappTemplateController::class);
+
+        // Broadcast
+        Route::get('/broadcast', [App\Http\Controllers\Admin\WhatsappBroadcastController::class, 'index'])->name('broadcast.index');
+        Route::post('/broadcast', [App\Http\Controllers\Admin\WhatsappBroadcastController::class, 'send'])->name('broadcast.send');
+    });
     // User management (except index, which is visible to all authenticated users)
     Route::post('users/check-email', [AdminUserController::class, 'checkEmail'])->name('users.check-email');
     Route::resource('users', AdminUserController::class)->except(['index']);
 
     // Kelas (class) management for admins (except index)
     // Use "kelas" as the route parameter name to avoid the default singular "kela"
+    Route::get('kelas/import-template', [AdminKelasController::class, 'downloadTemplate'])->name('kelas.import-template');
+    Route::post('kelas/import', [AdminKelasController::class, 'import'])->name('kelas.import');
     Route::resource('kelas', AdminKelasController::class)
         ->parameters(['kelas' => 'kelas'])
         ->except(['index']);

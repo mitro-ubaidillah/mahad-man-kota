@@ -1,110 +1,126 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl">{{ __('Admin') }}</h2>
-    </x-slot>
+    <x-slot name="header">{{ __('Admin') }}</x-slot>
 
-    <div class="py-6" x-data="{ confirmOpen: false, confirmEmail: '', confirmFormId: null, openConfirm(email, formId){ this.confirmEmail = email; this.confirmFormId = formId; this.confirmOpen = true }, doConfirm(){ if(this.confirmFormId){ document.getElementById(this.confirmFormId).submit(); } this.confirmOpen = false } }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @php $currentUser = auth()->user(); @endphp
-            <div class="mb-4 flex items-center justify-between">
-                @if($currentUser && $currentUser->is_admin)
-                    <a href="{{ route('users.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded">Tambah Admin</a>
-                @else
-                    <div></div>
-                @endif
+    @php $currentUser = auth()->user(); @endphp
 
-                <div class="flex items-center space-x-4">
-                    <form method="GET" action="{{ route('users.index') }}" id="per-page-form">
-                        <label for="per_page" class="text-sm text-gray-600 mr-2">Per page</label>
-                        <select name="per_page" id="per_page" class="border rounded px-2 py-1" onchange="document.getElementById('per-page-form').submit()">
-                            @foreach([10,20,50,100] as $n)
-                                <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }}</option>
-                            @endforeach
-                        </select>
-                    </form>
-                    <div class="text-sm text-gray-600">
-                        Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ $users->total() }}
+    <div x-data="{ confirmOpen: false, confirmEmail: '', confirmFormId: null, openConfirm(email, formId){ this.confirmEmail = email; this.confirmFormId = formId; this.confirmOpen = true }, doConfirm(){ if(this.confirmFormId){ document.getElementById(this.confirmFormId).submit(); } this.confirmOpen = false } }">
+
+        <x-card>
+            <x-slot name="header">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <h2 class="text-lg font-bold text-gray-800">Daftar Admin Sistem</h2>
+                    @if($currentUser && $currentUser->is_admin)
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('users.create') }}">
+                            <x-primary-button class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                                Tambah Admin
+                            </x-primary-button>
+                        </a>
                     </div>
+                    @endif
                 </div>
-            </div>
+            </x-slot>
 
-            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="overflow-x-auto -mx-6 -my-5">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-gray-50/80">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Admin</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">User</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Role</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-gray-100">
                         @foreach($users as $user)
-                        <tr>
-                            <td class="px-6 py-4">{{ $users->firstItem() ? $users->firstItem() + $loop->index : $user->id }}</td>
-                            <td class="px-6 py-4">{{ $user->name }}</td>
-                            <td class="px-6 py-4">{{ $user->email }}</td>
-                            <td class="px-6 py-4">{{ $user->is_admin ? 'Yes' : 'No' }}</td>
-                            <td class="px-6 py-4 text-center flex items-center justify-center">
-                                @if($currentUser && $currentUser->is_admin)
-                                    @if($user->email === 'root@root.com')
-                                        <span class="inline-flex items-center px-2 py-1 text-sm text-gray-400 bg-gray-100 rounded cursor-not-allowed opacity-50" aria-disabled="true" title="Root user cannot be edited">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h6M11 9h6M11 13h6M5 5h.01M5 9h.01M5 13h.01M5 17h14" />
-                                            </svg>
-                                            Edit
-                                        </span>
-                                    @else
-                                        <a href="{{ route('users.edit', $user) }}" class="inline-flex items-center px-2 py-1 text-sm text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h6M11 9h6M11 13h6M5 5h.01M5 9h.01M5 13h.01M5 17h14" />
-                                            </svg>
-                                            Edit
-                                        </a>
-                                    @endif
-
-                                    @if($user->email === 'root@root.com' || ($currentUser && ! $currentUser->is_root && $user->is_admin))
-                                        <span class="inline-flex items-center px-2 py-1 text-sm text-red-400 bg-red-50 rounded ml-2 cursor-not-allowed opacity-50" aria-disabled="true" title="Admin users cannot be deleted oleh non-root">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" />
-                                            </svg>
-                                            Delete
-                                        </span>
-                                    @else
-                                        <form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', $user) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" @click="openConfirm('{{ $user->email }}', 'delete-form-{{ $user->id }}')" class="inline-flex items-center px-2 py-1 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded ml-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" />
-                                                </svg>
-                                                Delete
-                                            </button>
-                                        </form>
-                                    @endif
+                        <tr class="hover:bg-emerald-50/50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                <div class="text-xs text-gray-500">{{ $user->email }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                @if($user->is_admin)
+                                    <x-badge color="emerald" size="sm">Admin</x-badge>
                                 @else
-                                    <span class="text-gray-400 text-sm">-</span>
+                                    <x-badge color="gray" size="sm">User Biasa</x-badge>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                @if($currentUser && $currentUser->is_admin)
+                                    <div class="flex items-center justify-center gap-3">
+                                        @if($user->email === 'root@root.com')
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-400 text-xs font-medium rounded-lg cursor-not-allowed border border-gray-200" title="Root user tidak dapat diedit">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                Edit
+                                            </span>
+                                        @else
+                                            <a href="{{ route('users.edit', $user) }}" class="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-medium">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                Edit
+                                            </a>
+                                        @endif
+
+                                        @if($user->email === 'root@root.com' || ($currentUser && ! $currentUser->is_root && $user->is_admin))
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50/50 text-red-300 text-xs font-medium rounded-lg cursor-not-allowed border border-red-100" title="Tidak dapat dihapus">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                Hapus
+                                            </span>
+                                        @else
+                                            <form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', $user) }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" @click="openConfirm('{{ $user->email }}', 'delete-form-{{ $user->id }}')" class="inline-flex items-center gap-1.5 text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-medium">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                @else
+                                    <span class="text-gray-400 text-xs">-</span>
                                 @endif
                             </td>
                         </tr>
                         @endforeach
+                        @if($users->isEmpty())
+                        <tr><td colspan="3" class="px-6 py-12 text-center text-sm text-gray-500">Belum ada data admin.</td></tr>
+                        @endif
                     </tbody>
                 </table>
-
-                <div class="p-4">{{ $users->links() }}</div>
             </div>
-        
-            {{-- Confirmation modal (Alpine) --}}
-            <div x-show="confirmOpen" x-cloak x-bind:style="confirmOpen ? 'display: flex;' : 'display: none;'" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center">
-                <div class="fixed inset-0 bg-black/50 z-40" @click="confirmOpen = false"></div>
-                <div class="bg-white rounded-lg shadow-lg p-6 z-50 relative max-w-md w-full mx-4">
-                    <h3 class="text-lg font-semibold">Confirm delete</h3>
-                    <p class="mt-2 text-sm text-gray-600">Are you sure you want to delete user <strong x-text="confirmEmail"></strong>?</p>
-                    <div class="mt-4 flex justify-end space-x-2">
-                        <button type="button" @click="confirmOpen = false" class="px-4 py-2 bg-gray-100 rounded">Cancel</button>
-                        <button type="button" @click.prevent="doConfirm()" class="px-4 py-2 bg-red-600 text-white rounded">Delete</button>
+
+            <x-slot name="footer">
+                <div class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="flex items-center gap-3 text-sm text-gray-500">
+                        <form method="GET" action="{{ route('users.index') }}" id="per-page-form" class="flex items-center gap-2">
+                            <label for="per_page" class="whitespace-nowrap">Tampilkan:</label>
+                            <select name="per_page" id="per_page" class="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-lg text-sm py-1.5 pl-3 pr-8 transition-colors" onchange="document.getElementById('per-page-form').submit()">
+                                @foreach([10,20,50,100] as $n)
+                                    <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }} baris</option>
+                                @endforeach
+                            </select>
+                        </form>
+                        <span class="hidden sm:inline">|</span>
+                        <span>Menampilkan {{ $users->firstItem() ?? 0 }} - {{ $users->lastItem() ?? 0 }} dari {{ $users->total() }}</span>
                     </div>
+                    <div>
+                        {{ $users->links() }}
+                    </div>
+                </div>
+            </x-slot>
+        </x-card>
+
+        <div x-show="confirmOpen" x-cloak style="display:none;" class="fixed inset-0 z-[100] flex items-center justify-center">
+            <div class="fixed inset-0 bg-black/50 z-40" @click="confirmOpen = false"></div>
+            <div class="bg-white rounded-xl shadow-xl p-6 z-50 relative max-w-md w-full mx-4">
+                <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mx-auto mb-4">
+                    <svg class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.293 5.293a1 1 0 011.414 0L21 14.586V19a2 2 0 01-2 2H5a2 2 0 01-2-2v-4.414l9.293-9.293z"/></svg>
+                </div>
+                <h3 class="text-center text-lg font-semibold text-gray-900">Hapus Admin</h3>
+                <p class="mt-2 text-center text-sm text-gray-600">Yakin ingin menghapus user <strong x-text="confirmEmail"></strong>?</p>
+                <div class="mt-5 flex justify-center gap-3">
+                    <button type="button" @click="confirmOpen = false" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">Batal</button>
+                    <button type="button" @click.prevent="doConfirm()" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition">Ya, Hapus</button>
                 </div>
             </div>
         </div>

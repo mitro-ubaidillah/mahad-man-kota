@@ -1,144 +1,171 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl">{{ __('Santri') }}</h2>
+        {{ __('Santri') }}
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @php $currentUser = auth()->user(); @endphp
-            <div class="mb-4 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    @if($currentUser && $currentUser->is_admin)
-                        <a href="{{ route('santris.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded">Tambah Santri</a>
+    @php $currentUser = auth()->user(); @endphp
 
-                        <!-- Import button -->
-                        <button id="open-import-modal" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded">
-                            <!-- simple upload icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12v9m0-9l3 3m-3-3-3 3M12 3v9" />
-                            </svg>
-                            Import Data
-                        </button>
-                    @endif
-                </div>
-
-                <div class="flex items-center space-x-4">
-                    <form method="GET" action="{{ route('santris.index') }}" id="filter-form" class="flex items-center space-x-3">
-                        <div class="flex items-center space-x-2">
-                            <label for="kelas_id" class="text-sm text-gray-600">Kelas</label>
-                            <select name="kelas_id" id="kelas_id" class="border rounded px-2 py-1" onchange="document.getElementById('filter-form').submit()">
-                                <option value="">Semua</option>
-                                @foreach($kelasList as $k)
-                                    <option value="{{ $k->id }}" {{ isset($selectedKelasId) && (string)$selectedKelasId === (string)$k->id ? 'selected' : '' }}>{{ $k->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="flex items-center space-x-2">
-                            <label for="per_page" class="text-sm text-gray-600">Per page</label>
-                            <select name="per_page" id="per_page" class="border rounded px-2 py-1" onchange="document.getElementById('filter-form').submit()">
-                                @foreach([10,20,50,100] as $n)
-                                    <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </form>
-                    <div class="text-sm text-gray-600">Showing {{ $santris->firstItem() ?? 0 }} to {{ $santris->lastItem() ?? 0 }} of {{ $santris->total() }}</div>
-                </div>
+    {{-- Import Modal --}}
+    @if($currentUser && $currentUser->is_admin)
+    <div id="import-modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="text-base font-semibold text-gray-900">Import Santri</h3>
+                <button id="close-import-modal" class="text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
             </div>
-
-            @if($currentUser && $currentUser->is_admin)
-                <!-- Import Modal -->
-                <div id="import-modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
-                    <div class="bg-white rounded shadow-lg w-full max-w-2xl mx-4">
-                        <div class="px-6 py-4 border-b flex items-center justify-between">
-                            <h3 class="text-lg font-medium">Import Santri</h3>
-                            <button id="close-import-modal" class="text-gray-600 hover:text-gray-800">✕</button>
-                        </div>
-                        <div class="p-6">
-                            <p class="mb-4">You can import santri from a CSV file. Download the template if you need one.</p>
-
-                            <div class="mb-4">
-                                <a href="{{ route('santris.import-template') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 border rounded">
-                                    <!-- download icon -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l4-4m-4 4-4-4M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6" />
-                                    </svg>
-                                    Unduh Template Import (Excel)
-                                </a>
-                            </div>
-
-                            <form id="import-form" method="POST" action="{{ route('santris.import') }}" enctype="multipart/form-data">
-                                @csrf
-                                <div id="drop-area" class="border-2 border-dashed border-gray-300 rounded p-6 text-center">
-                                    <p id="drop-text" class="text-sm text-gray-600">Drag & drop CSV file here, or <label for="file-input" class="text-blue-600 underline cursor-pointer">browse</label></p>
-                                    <input id="file-input" name="file" type="file" accept=".csv,.txt,.xls,.xlsx" class="hidden" />
-                                    <p id="file-name" class="mt-3 text-sm text-gray-700"></p>
-                                </div>
-
-                                <div class="mt-4 flex justify-end space-x-3">
-                                    <button type="button" id="cancel-import" class="px-4 py-2 bg-gray-100 rounded">Cancel</button>
-                                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Upload & Import</button>
-                                </div>
-                            </form>
-                            <p class="mt-3 text-sm text-gray-500">Notes: first row may be a header. Columns expected: nis,name,email,phone,kelas,birth_date (YYYY-MM-DD).</p>
-                        </div>
-                    </div>
+            <div class="p-6">
+                <p class="mb-4 text-sm text-gray-600">Import santri dari file CSV/Excel. Unduh template jika diperlukan.</p>
+                <div class="mb-4">
+                    <a href="{{ route('santris.import-template') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l4-4m-4 4-4-4M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6" /></svg>
+                        Unduh Template (Excel)
+                    </a>
                 </div>
-            @endif
-
-            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIS</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kelas</th>
-                            <th class="px-6 py-3">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($santris as $s)
-                        <tr>
-                            <td class="px-6 py-4">{{ ($santris->firstItem() ?? 0) + $loop->index }}</td>
-                            <td class="px-6 py-4">{{ $s->nis }}</td>
-                            <td class="px-6 py-4">{{ $s->name }}</td>
-                            <td class="px-6 py-4">{{ $s->email }}</td>
-                            <td class="px-6 py-4">{{ optional($s->kelas)->name ?? $s->getAttribute('kelas') ?? '-' }}</td>
-                            <td class="px-6 py-4 text-center flex items-center justify-center">
-                                @if($currentUser && $currentUser->is_admin)
-                                    <a href="{{ route('santris.edit', $s) }}" class="inline-flex items-center px-2 py-1 text-sm text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h6M11 9h6M11 13h6M5 5h.01M5 9h.01M5 13h.01M5 17h14" />
-                                        </svg>
-                                        Edit
-                                    </a>
-
-                                    <form method="POST" action="{{ route('santris.destroy', $s) }}" class="inline delete-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="inline-flex items-center px-2 py-1 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded ml-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" />
-                                            </svg>
-                                            Delete
-                                        </button>
-                                    </form>
-                                @else
-                                    <span class="text-gray-400 text-sm">-</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
-                <div class="p-4">{{ $santris->links() }}</div>
+                <form id="import-form" method="POST" action="{{ route('santris.import') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div id="drop-area" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <p id="drop-text" class="text-sm text-gray-600">Drag & drop file di sini, atau <label for="file-input" class="text-emerald-600 underline cursor-pointer font-medium">pilih file</label></p>
+                        <input id="file-input" name="file" type="file" accept=".csv,.txt,.xls,.xlsx" class="hidden" />
+                        <p id="file-name" class="mt-3 text-sm text-emerald-700 font-medium"></p>
+                    </div>
+                    <div class="mt-4 flex justify-end gap-3 pt-3 border-t border-gray-100">
+                        <button type="button" id="cancel-import" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition">Batal</button>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition">Upload & Import</button>
+                    </div>
+                </form>
+                <p class="mt-3 text-xs text-gray-500 leading-relaxed">
+                    <strong>Penting:</strong> Pastikan urutan dan nama kolom pada baris pertama sesuai dengan draf template.<br>
+                    (NIS, Nama Lengkap, Email, Nomor HP, Nama Kelas, Tanggal Lahir).
+                </p>
             </div>
         </div>
     </div>
+    @endif
+
+    <x-card>
+        <x-slot name="header">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                {{-- Filters (left) --}}
+                <form method="GET" action="{{ route('santris.index') }}" id="filter-form" class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <label for="kelas_id" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter Kelas:</label>
+                        <select name="kelas_id" id="kelas_id" class="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-lg text-sm w-full sm:w-auto transition-colors" onchange="document.getElementById('filter-form').submit()">
+                            <option value="">Semua Kelas</option>
+                            @foreach($kelasList as $k)
+                                <option value="{{ $k->id }}" {{ isset($selectedKelasId) && (string)$selectedKelasId === (string)$k->id ? 'selected' : '' }}>{{ $k->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
+
+                {{-- Action buttons (right) --}}
+                @if($currentUser && $currentUser->is_admin)
+                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <x-secondary-button id="open-import-modal" class="flex items-center gap-2 flex-1 sm:flex-none justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12v9m0-9l3 3m-3-3-3 3M12 3v9" /></svg>
+                        Import Santri
+                    </x-secondary-button>
+                    <a href="{{ route('santris.create') }}" class="flex-1 sm:flex-none">
+                        <x-primary-button class="flex items-center gap-2 w-full justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            Tambah Santri
+                        </x-primary-button>
+                    </a>
+                </div>
+                @endif
+            </div>
+        </x-slot>
+
+        {{-- Table --}}
+        <div class="overflow-x-auto -mx-6 -my-5">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50/80">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">No</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Santri</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Kontak</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Kelas</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                    @forelse($santris as $s)
+                    <tr class="hover:bg-emerald-50/50 transition duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ($santris->firstItem() ?? 0) + $loop->index }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ $s->name }}</div>
+                            <div class="text-xs text-gray-500">NIS: {{ $s->nis }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $s->email ?? '-' }}</div>
+                            <div class="text-xs text-gray-500">{{ $s->phone ?? '-' }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            @if(optional($s->kelas)->name)
+                                <x-badge color="emerald" size="sm">{{ $s->kelas->name }}</x-badge>
+                            @else
+                                <span class="text-gray-400 italic">Tanpa Kelas</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                            @if($currentUser && $currentUser->is_admin)
+                                <div class="flex items-center justify-center gap-3">
+                                    <a href="{{ route('santris.edit', $s) }}" class="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-medium">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                        Edit
+                                    </a>
+                                    <form method="POST" action="{{ route('santris.destroy', $s) }}" class="inline delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="inline-flex items-center gap-1.5 text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-medium">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            @else
+                                <span class="text-gray-400 text-xs">-</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            <p class="mt-4 text-sm text-gray-500 font-medium">Belum ada data santri.</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        {{-- Pagination --}}
+        <x-slot name="footer">
+            <div class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center gap-3 text-sm text-gray-500">
+                    <form method="GET" action="{{ route('santris.index') }}" id="per-page-form" class="flex items-center gap-2">
+                        <input type="hidden" name="kelas_id" value="{{ $selectedKelasId ?? '' }}">
+                        <label for="per_page" class="whitespace-nowrap">Tampilkan:</label>
+                        <select name="per_page" id="per_page" class="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-lg text-sm py-1.5 pl-3 pr-8 transition-colors" onchange="document.getElementById('per-page-form').submit()">
+                            @foreach([10,20,50,100] as $n)
+                                <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }} baris</option>
+                            @endforeach
+                        </select>
+                    </form>
+                    <span class="hidden sm:inline">|</span>
+                    <span>Menampilkan {{ $santris->firstItem() ?? 0 }} - {{ $santris->lastItem() ?? 0 }} dari {{ $santris->total() }}</span>
+                </div>
+                <div>
+                    {{ $santris->links() }}
+                </div>
+            </div>
+        </x-slot>
+    </x-card>
     <script>
         @if($currentUser && $currentUser->is_admin)
             document.querySelectorAll('.delete-form').forEach(function(form){
