@@ -12,6 +12,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public const ROLE_SUPER_ADMIN = 'super_admin';
+    public const ROLE_ATTENDANCE_ADMIN = 'attendance_admin';
+    public const ROLE_ARTICLE_ADMIN = 'article_admin';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,6 +26,7 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
+        'admin_role',
     ];
 
     /**
@@ -51,6 +56,10 @@ class User extends Authenticatable
      */
     public function isRoot(): bool
     {
+        if (! $this->email) {
+            return false;
+        }
+
         $rootEmail = config('app.root_email', 'root@root.com');
         return strtolower($this->email) === strtolower($rootEmail);
     }
@@ -61,5 +70,48 @@ class User extends Authenticatable
     public function getIsRootAttribute(): bool
     {
         return $this->isRoot();
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->isRoot() || $this->admin_role === self::ROLE_SUPER_ADMIN;
+    }
+
+    public function canManageAttendance(): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        if ($this->admin_role === self::ROLE_ARTICLE_ADMIN) {
+            return false;
+        }
+
+        return $this->is_admin || $this->admin_role === self::ROLE_ATTENDANCE_ADMIN;
+    }
+
+    public function canManageArticles(): bool
+    {
+        return $this->isSuperAdmin() || $this->admin_role === self::ROLE_ARTICLE_ADMIN;
+    }
+
+    public function dashboardRoute(): string
+    {
+        return $this->canManageArticles() && ! $this->canManageAttendance()
+            ? route('mahad-admin.dashboard')
+            : route('dashboard');
+    }
+
+    public function roleLabel(): string
+    {
+        if ($this->isSuperAdmin()) {
+            return 'Super Admin';
+        }
+
+        return match ($this->admin_role) {
+            self::ROLE_ARTICLE_ADMIN => 'Admin Artikel',
+            self::ROLE_ATTENDANCE_ADMIN => 'Admin Absensi',
+            default => $this->is_admin ? 'Admin Absensi' : 'User Biasa',
+        };
     }
 }

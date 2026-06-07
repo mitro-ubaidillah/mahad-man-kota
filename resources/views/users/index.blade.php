@@ -5,50 +5,61 @@
 
     <div x-data="{ confirmOpen: false, confirmEmail: '', confirmFormId: null, openConfirm(email, formId){ this.confirmEmail = email; this.confirmFormId = formId; this.confirmOpen = true }, doConfirm(){ if(this.confirmFormId){ document.getElementById(this.confirmFormId).submit(); } this.confirmOpen = false } }">
 
-        <x-card>
-            <x-slot name="header">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <h2 class="text-lg font-bold text-gray-800">Daftar Admin Sistem</h2>
-                    @if($currentUser && $currentUser->is_admin)
-                    <div class="flex items-center gap-2">
-                        <a href="{{ route('users.create') }}">
-                            <x-primary-button class="flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                                Tambah Admin
-                            </x-primary-button>
-                        </a>
-                    </div>
-                    @endif
-                </div>
-            </x-slot>
+        <x-ui-card class="space-y-6">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <x-ui-section-heading description="Kelola akun admin yang dapat mengakses panel ini">Daftar Admin Sistem</x-ui-section-heading>
+                @if($currentUser && $currentUser->isSuperAdmin())
+                    <a href="{{ route('users.create') }}">
+                        <x-primary-button class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            Tambah Admin
+                        </x-primary-button>
+                    </a>
+                @endif
+            </div>
 
-            <div class="overflow-x-auto -mx-6 -my-5">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50/80">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Role</th>
-                            <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100">
-                        @foreach($users as $user)
-                        <tr class="hover:bg-emerald-50/50 transition duration-150">
+            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                <form method="GET" action="{{ route('users.index') }}" id="per-page-form" class="flex items-center gap-2">
+                    <label for="per_page" class="whitespace-nowrap">Baris per halaman:</label>
+                    <select name="per_page" id="per_page" class="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-lg text-sm py-1.5 pl-3 pr-8 transition-colors" onchange="document.getElementById('per-page-form').submit()">
+                        @foreach([10,20,50,100] as $n)
+                            <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }} baris</option>
+                        @endforeach
+                    </select>
+                </form>
+            </div>
+
+            <x-ui-table>
+                <x-slot name="head">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">User</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
+                    </tr>
+                </x-slot>
+
+                <x-slot name="body">
+                    @forelse($users as $user)
+                        <tr class="hover:bg-emerald-50/40 transition duration-150">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
                                 <div class="text-xs text-gray-500">{{ $user->email }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                @if($user->is_admin)
-                                    <x-badge color="emerald" size="sm">Admin</x-badge>
+                                @if($user->isSuperAdmin())
+                                    <x-badge color="amber" size="sm">{{ $user->roleLabel() }}</x-badge>
+                                @elseif($user->canManageAttendance())
+                                    <x-badge color="emerald" size="sm">{{ $user->roleLabel() }}</x-badge>
+                                @elseif($user->canManageArticles())
+                                    <x-badge color="blue" size="sm">{{ $user->roleLabel() }}</x-badge>
                                 @else
                                     <x-badge color="gray" size="sm">User Biasa</x-badge>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                @if($currentUser && $currentUser->is_admin)
+                                @if($currentUser && $currentUser->isSuperAdmin())
                                     <div class="flex items-center justify-center gap-3">
-                                        @if($user->email === 'root@root.com')
+                                        @if($user->isRoot())
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-400 text-xs font-medium rounded-lg cursor-not-allowed border border-gray-200" title="Root user tidak dapat diedit">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                 Edit
@@ -60,7 +71,7 @@
                                             </a>
                                         @endif
 
-                                        @if($user->email === 'root@root.com' || ($currentUser && ! $currentUser->is_root && $user->is_admin))
+                                        @if($user->isRoot())
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50/50 text-red-300 text-xs font-medium rounded-lg cursor-not-allowed border border-red-100" title="Tidak dapat dihapus">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                 Hapus
@@ -81,34 +92,16 @@
                                 @endif
                             </td>
                         </tr>
-                        @endforeach
-                        @if($users->isEmpty())
-                        <tr><td colspan="3" class="px-6 py-12 text-center text-sm text-gray-500">Belum ada data admin.</td></tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-12 text-center text-sm text-gray-500">Belum ada data admin.</td>
+                        </tr>
+                    @endforelse
+                </x-slot>
+            </x-ui-table>
 
-            <x-slot name="footer">
-                <div class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div class="flex items-center gap-3 text-sm text-gray-500">
-                        <form method="GET" action="{{ route('users.index') }}" id="per-page-form" class="flex items-center gap-2">
-                            <label for="per_page" class="whitespace-nowrap">Tampilkan:</label>
-                            <select name="per_page" id="per_page" class="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-lg text-sm py-1.5 pl-3 pr-8 transition-colors" onchange="document.getElementById('per-page-form').submit()">
-                                @foreach([10,20,50,100] as $n)
-                                    <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }} baris</option>
-                                @endforeach
-                            </select>
-                        </form>
-                        <span class="hidden sm:inline">|</span>
-                        <span>Menampilkan {{ $users->firstItem() ?? 0 }} - {{ $users->lastItem() ?? 0 }} dari {{ $users->total() }}</span>
-                    </div>
-                    <div>
-                        {{ $users->links() }}
-                    </div>
-                </div>
-            </x-slot>
-        </x-card>
+            <x-ui-pagination :paginator="$users" />
+        </x-ui-card>
 
         <div x-show="confirmOpen" x-cloak style="display:none;" class="fixed inset-0 z-[100] flex items-center justify-center">
             <div class="fixed inset-0 bg-black/50 z-40" @click="confirmOpen = false"></div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -28,6 +29,8 @@ class UserController extends Controller
      */
     public function create()
     {
+        abort_unless(auth()->user()?->isSuperAdmin(), 403);
+
         return view('users.create');
     }
 
@@ -36,13 +39,16 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        abort_unless(auth()->user()?->isSuperAdmin(), 403);
+
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-            'is_admin' => 'required|boolean',
+            'admin_role' => ['required', Rule::in(['user', User::ROLE_ATTENDANCE_ADMIN, User::ROLE_ARTICLE_ADMIN, User::ROLE_SUPER_ADMIN])],
         ]);
 
+        $data = $this->applyRoleFlags($data);
         $data['password'] = Hash::make($data['password']);
 
         User::create($data);
@@ -63,6 +69,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+    abort_unless(auth()->user()?->isSuperAdmin(), 403);
+
     return view('users.edit', compact('user'));
     }
 
@@ -71,12 +79,18 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        abort_unless(auth()->user()?->isSuperAdmin(), 403);
+
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => "required|email|unique:users,email,{$user->id}",
             'password' => 'nullable|string|min:6|confirmed',
-            'is_admin' => 'required|boolean',
+            'admin_role' => ['required', Rule::in(['user', User::ROLE_ATTENDANCE_ADMIN, User::ROLE_ARTICLE_ADMIN, User::ROLE_SUPER_ADMIN])],
         ]);
+
+        if ($user->isRoot()) {
+            $data['admin_role'] = User::ROLE_SUPER_ADMIN;
+        }
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($data['password']);
@@ -84,6 +98,7 @@ class UserController extends Controller
             unset($data['password']);
         }
 
+        $data = $this->applyRoleFlags($data);
         $user->update($data);
 
     return redirect()->route('users.index')->with("success", __("User updated"));
@@ -94,6 +109,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        abort_unless(auth()->user()?->isSuperAdmin(), 403);
+
         // Prevent deleting the seeded root user (centralized in the model)
         if (method_exists($user, 'isRoot') && $user->isRoot()) {
             return redirect()->back()->with("error", __("Cannot delete root user."));
@@ -131,5 +148,21 @@ class UserController extends Controller
             ->exists();
 
         return response()->json(['available' => ! $exists]);
+    }
+
+    private function applyRoleFlags(array $data): array
+    {
+        $role = $data['admin_role'];
+
+        $data['is_admin'] = in_array($role, [
+            User::ROLE_SUPER_ADMIN,
+            User::ROLE_ATTENDANCE_ADMIN,
+        ], true);
+
+        if ($role === 'user') {
+            $data['admin_role'] = null;
+        }
+
+        return $data;
     }
 }

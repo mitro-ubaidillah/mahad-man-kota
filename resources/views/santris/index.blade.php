@@ -44,24 +44,10 @@
     </div>
     @endif
 
-    <x-card>
-        <x-slot name="header">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                {{-- Filters (left) --}}
-                <form method="GET" action="{{ route('santris.index') }}" id="filter-form" class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <label for="kelas_id" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter Kelas:</label>
-                        <select name="kelas_id" id="kelas_id" class="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-lg text-sm w-full sm:w-auto transition-colors" onchange="document.getElementById('filter-form').submit()">
-                            <option value="">Semua Kelas</option>
-                            @foreach($kelasList as $k)
-                                <option value="{{ $k->id }}" {{ isset($selectedKelasId) && (string)$selectedKelasId === (string)$k->id ? 'selected' : '' }}>{{ $k->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </form>
-
-                {{-- Action buttons (right) --}}
-                @if($currentUser && $currentUser->is_admin)
+    <x-ui-card class="space-y-5">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <x-ui-section-heading description="Kelola data santri dengan filter kelas dan aksi cepat">Santri</x-ui-section-heading>
+            @if($currentUser && $currentUser->is_admin)
                 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     <x-secondary-button id="open-import-modal" class="flex items-center gap-2 flex-1 sm:flex-none justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12v9m0-9l3 3m-3-3-3 3M12 3v9" /></svg>
@@ -74,25 +60,47 @@
                         </x-primary-button>
                     </a>
                 </div>
-                @endif
-            </div>
-        </x-slot>
+            @endif
+        </div>
 
-        {{-- Table --}}
-        <div class="overflow-x-auto -mx-6 -my-5">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50/80">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">No</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Santri</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Kontak</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Kelas</th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
-                    @forelse($santris as $s)
-                    <tr class="hover:bg-emerald-50/50 transition duration-150">
+        <div class="flex flex-wrap items-center gap-4">
+            <form method="GET" action="{{ route('santris.index') }}" id="filter-form" class="flex items-center gap-3 flex-wrap">
+                <div>
+                    <label for="kelas_id" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter Kelas:</label>
+                    <select name="kelas_id" id="kelas_id" class="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-lg text-sm pl-3 pr-8 py-1.5 transition-colors" onchange="document.getElementById('filter-form').submit()">
+                        <option value="">Semua Kelas</option>
+                        @foreach($kelasList as $k)
+                            <option value="{{ $k->id }}" {{ isset($selectedKelasId) && (string)$selectedKelasId === (string)$k->id ? 'selected' : '' }}>{{ $k->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </form>
+
+            <form method="GET" action="{{ route('santris.index') }}" id="per-page-form" class="flex items-center gap-2">
+                <input type="hidden" name="kelas_id" value="{{ $selectedKelasId ?? '' }}">
+                <label for="per_page" class="whitespace-nowrap text-sm font-medium text-gray-700">Baris per halaman:</label>
+                <select name="per_page" id="per_page" class="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-lg text-sm py-1.5 pl-3 pr-8 transition-colors" onchange="document.getElementById('per-page-form').submit()">
+                    @foreach([10,20,50,100] as $n)
+                        <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }} baris</option>
+                    @endforeach
+                </select>
+            </form>
+        </div>
+
+        <x-ui-table>
+            <x-slot name="head">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">No</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Santri</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Kontak</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Kelas</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
+                </tr>
+            </x-slot>
+
+            <x-slot name="body">
+                @forelse($santris as $s)
+                    <tr class="hover:bg-emerald-50/40 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ($santris->firstItem() ?? 0) + $loop->index }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ $s->name }}</div>
@@ -130,7 +138,7 @@
                             @endif
                         </td>
                     </tr>
-                    @empty
+                @empty
                     <tr>
                         <td colspan="5" class="px-6 py-12 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -139,33 +147,12 @@
                             <p class="mt-4 text-sm text-gray-500 font-medium">Belum ada data santri.</p>
                         </td>
                     </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                @endforelse
+            </x-slot>
+        </x-ui-table>
 
-        {{-- Pagination --}}
-        <x-slot name="footer">
-            <div class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div class="flex items-center gap-3 text-sm text-gray-500">
-                    <form method="GET" action="{{ route('santris.index') }}" id="per-page-form" class="flex items-center gap-2">
-                        <input type="hidden" name="kelas_id" value="{{ $selectedKelasId ?? '' }}">
-                        <label for="per_page" class="whitespace-nowrap">Tampilkan:</label>
-                        <select name="per_page" id="per_page" class="border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-lg text-sm py-1.5 pl-3 pr-8 transition-colors" onchange="document.getElementById('per-page-form').submit()">
-                            @foreach([10,20,50,100] as $n)
-                                <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }} baris</option>
-                            @endforeach
-                        </select>
-                    </form>
-                    <span class="hidden sm:inline">|</span>
-                    <span>Menampilkan {{ $santris->firstItem() ?? 0 }} - {{ $santris->lastItem() ?? 0 }} dari {{ $santris->total() }}</span>
-                </div>
-                <div>
-                    {{ $santris->links() }}
-                </div>
-            </div>
-        </x-slot>
-    </x-card>
+        <x-ui-pagination :paginator="$santris" />
+    </x-ui-card>
     <script>
         @if($currentUser && $currentUser->is_admin)
             document.querySelectorAll('.delete-form').forEach(function(form){

@@ -1,37 +1,35 @@
 <x-app-layout>
     <x-slot name="header">Daftar Presensi</x-slot>
 
-    <x-card>
-        <x-slot name="header">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h2 class="text-lg font-bold text-gray-800">Catatan Kehadiran Santri</h2>
-                <div class="flex items-center justify-end gap-2">
-                    <x-secondary-button id="open-export-modal" class="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l4-4m-4 4-4-4M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6"/></svg>
-                        Rekap Excel
-                    </x-secondary-button>
-                    <a href="{{ route('attendances.create') }}">
-                        <x-primary-button class="flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                            Isi Presensi
-                        </x-primary-button>
-                    </a>
-                </div>
+    <x-ui-card class="space-y-6">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <x-ui-section-heading description="Catatan presensi harian dan tombol aksi cepat">Catatan Kehadiran Santri</x-ui-section-heading>
+            <div class="flex items-center justify-end gap-2">
+                <x-secondary-button id="open-export-modal" class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l4-4m-4 4-4-4M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6"/></svg>
+                    Rekap Excel
+                </x-secondary-button>
+                <a href="{{ route('attendances.create') }}">
+                    <x-primary-button class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        Isi Presensi
+                    </x-primary-button>
+                </a>
             </div>
-        </x-slot>
+        </div>
 
-        <div class="overflow-x-auto -mx-6 -my-5">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50/80">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Santri</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Kegiatan</th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-4 text-right text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
-                    @forelse($attendances as $at)
+        <x-ui-table>
+            <x-slot name="head">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Santri</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Kegiatan</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-4 text-right text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
+                </tr>
+            </x-slot>
+
+            <x-slot name="body">
+                @forelse($attendances as $at)
                     <tr class="hover:bg-emerald-50/50 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ $at->santri->name ?? '-' }}</div>
@@ -60,22 +58,22 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex items-center justify-end gap-3">
-                                    <a href="{{ route('attendances.edit', $at) }}" class="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-medium">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                        Edit
-                                    </a>
-                                    <form method="POST" action="{{ route('attendances.destroy', $at) }}" class="inline delete-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="inline-flex items-center gap-1.5 text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-medium">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                            Hapus
-                                        </button>
-                                    </form>
-                                </div>
+                                <a href="{{ route('attendances.edit', $at) }}" class="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-medium">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    Edit
+                                </a>
+                                <form method="POST" action="{{ route('attendances.destroy', $at) }}" class="inline delete-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="inline-flex items-center gap-1.5 text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-medium">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
-                    @empty
+                @empty
                     <tr>
                         <td colspan="4" class="px-6 py-12 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,22 +83,12 @@
                             <p class="text-xs text-gray-400 mt-1">Silakan klik tombol &quot;Isi Presensi&quot; untuk menambahkan data baru.</p>
                         </td>
                     </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                @endforelse
+            </x-slot>
+        </x-ui-table>
 
-        <x-slot name="footer">
-            <div class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                <span class="text-sm text-gray-500 mb-4 sm:mb-0">
-                    Menampilkan {{ $attendances->firstItem() ?? 0 }} - {{ $attendances->lastItem() ?? 0 }} dari {{ $attendances->total() }} santri
-                </span>
-                <div>
-                    {{ $attendances->links() }}
-                </div>
-            </div>
-        </x-slot>
-    </x-card>
+        <x-ui-pagination :paginator="$attendances" />
+    </x-ui-card>
 
     <div id="export-modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-xl mx-4">

@@ -42,12 +42,11 @@
     </div>
     @endif
 
-    <x-card>
-        <x-slot name="header">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h2 class="text-lg font-bold text-gray-800">Daftar Semua Kelas</h2>
-                @if($currentUser && $currentUser->is_admin)
-                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+    <x-ui-card class="space-y-5">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <x-ui-section-heading description="Pusat data kelas dengan import cepat">Daftar Semua Kelas</x-ui-section-heading>
+            @if($currentUser && $currentUser->is_admin)
+                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     <x-secondary-button id="open-import-modal" class="flex items-center gap-2 flex-1 sm:flex-none justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                         Import Kelas
@@ -59,23 +58,21 @@
                         </x-primary-button>
                     </a>
                 </div>
-                @endif
-            </div>
-        </x-slot>
+            @endif
+        </div>
 
-        {{-- Table --}}
-        <div class="overflow-x-auto -mx-6 -my-5">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50/80">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Nama Kelas</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Deskripsi</th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
-                    @forelse($kelas as $k)
-                    <tr class="hover:bg-emerald-50/50 transition duration-150">
+        <x-ui-table>
+            <x-slot name="head">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Nama Kelas</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Deskripsi</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
+                </tr>
+            </x-slot>
+
+            <x-slot name="body">
+                @forelse($kelas as $k)
+                    <tr class="hover:bg-emerald-50/40 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ $k->name }}</div>
                             <div class="text-xs text-gray-500">{{ $k->santris_count ?? 0 }} Santri</div>
@@ -102,7 +99,7 @@
                             @endif
                         </td>
                     </tr>
-                    @empty
+                @empty
                     <tr>
                         <td colspan="3" class="px-6 py-12 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -111,19 +108,12 @@
                             <p class="mt-4 text-sm text-gray-500 font-medium">Belum ada data kelas.</p>
                         </td>
                     </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                @endforelse
+            </x-slot>
+        </x-ui-table>
 
-        {{-- Pagination --}}
-        <x-slot name="footer">
-            <div class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <span class="text-sm text-gray-500">Menampilkan {{ $kelas->firstItem() ?? 0 }} - {{ $kelas->lastItem() ?? 0 }} dari {{ $kelas->total() }} kelas</span>
-                <div>{{ $kelas->links() }}</div>
-            </div>
-        </x-slot>
-    </x-card>
+        <x-ui-pagination :paginator="$kelas" />
+    </x-ui-card>
 
     @if($currentUser && $currentUser->is_admin)
     <script>

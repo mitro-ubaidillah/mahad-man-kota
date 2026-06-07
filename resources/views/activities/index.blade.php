@@ -3,11 +3,10 @@
 
     @php $currentUser = auth()->user(); @endphp
 
-    <x-card>
-        <x-slot name="header">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h2 class="text-lg font-bold text-gray-800">Daftar Kegiatan</h2>
-                @if($currentUser && $currentUser->is_admin)
+    <x-ui-card class="space-y-5">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <x-ui-section-heading description="Daftar kegiatan & jadwal">Kegiatan</x-ui-section-heading>
+            @if($currentUser && $currentUser->is_admin)
                 <div class="flex items-center gap-2">
                     <a href="{{ route('activities.create') }}">
                         <x-primary-button class="flex items-center gap-2">
@@ -16,24 +15,22 @@
                         </x-primary-button>
                     </a>
                 </div>
-                @endif
-            </div>
-        </x-slot>
+            @endif
+        </div>
 
-        {{-- Table --}}
-        <div class="overflow-x-auto -mx-6 -my-5">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50/80">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Judul</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Tanggal</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Waktu</th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
-                    @forelse($activities as $a)
-                    <tr class="hover:bg-emerald-50/50 transition duration-150">
+        <x-ui-table>
+            <x-slot name="head">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Judul</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Tanggal</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Waktu</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
+                </tr>
+            </x-slot>
+
+            <x-slot name="body">
+                @forelse($activities as $a)
+                    <tr class="hover:bg-emerald-50/40 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ $a->title }}</div>
                             <div class="text-xs text-gray-500">ID: {{ $a->id }}</div>
@@ -81,7 +78,7 @@
                             @endif
                         </td>
                     </tr>
-                    @empty
+                @empty
                     <tr>
                         <td colspan="4" class="px-6 py-12 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,19 +87,12 @@
                             <p class="mt-4 text-sm text-gray-500 font-medium">Belum ada data kegiatan.</p>
                         </td>
                     </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                @endforelse
+            </x-slot>
+        </x-ui-table>
 
-        {{-- Pagination --}}
-        <x-slot name="footer">
-            <div class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <span class="text-sm text-gray-500">Menampilkan {{ $activities->firstItem() ?? 0 }} - {{ $activities->lastItem() ?? 0 }} dari {{ $activities->total() }} kegiatan</span>
-                <div>{{ $activities->links() }}</div>
-            </div>
-        </x-slot>
-    </x-card>
+        <x-ui-pagination :paginator="$activities" />
+    </x-ui-card>
 
     <script>
         @if($currentUser && $currentUser->is_admin)

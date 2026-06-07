@@ -1,0 +1,2182 @@
+/* ===== SMART CITY SCENE - DAY/NIGHT ===== */
+
+.scene {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+  transition: background 2s ease-in-out;
+}
+
+.scene.day {
+  background: linear-gradient(
+    180deg,
+    #b8e3f5 0%,
+    #c9eaf7 30%,
+    #dbf1f9 50%,
+    #e8f5fb 70%,
+    #f5fafd 90%
+  );
+}
+
+.scene.night {
+  background: linear-gradient(
+    180deg,
+    #0a1628 0%,
+    #0f2038 25%,
+    #142a45 50%,
+    #1a3050 75%,
+    #1f3658 100%
+  );
+}
+
+/* ===== LANGIT ===== */
+.sky {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.sun {
+  position: absolute;
+  top: 6%;
+  right: 8%;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff5b8, #ffd966 60%, #f5b942);
+  box-shadow:
+    0 0 40px rgba(255, 217, 102, 0.5),
+    0 0 80px rgba(255, 217, 102, 0.25);
+  transition:
+    opacity 2s ease,
+    transform 2s ease;
+}
+
+.scene.night .sun {
+  opacity: 0;
+  transform: translateY(60px);
+}
+
+.moon {
+  position: absolute;
+  top: 6%;
+  right: 8%;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translateY(-60px);
+  transition:
+    opacity 2s ease,
+    transform 2s ease;
+}
+
+.scene.night .moon {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.moon-shape {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: inset -14px 0 0 0 #f5e6a3;
+  filter: drop-shadow(0 0 12px rgba(245, 230, 163, 0.4));
+}
+
+/* ===== BINTANG ===== */
+.stars-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+.scene.night .stars-layer {
+  opacity: 1;
+}
+
+.star-dot {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle 2.5s ease-in-out infinite alternate;
+}
+
+.star-dot:nth-child(3n) {
+  width: 3px;
+  height: 3px;
+}
+.star-dot:nth-child(5n) {
+  background: rgba(255, 235, 153, 0.8);
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* ===== AWAN ===== */
+.cloud {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 100px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.05));
+  transition:
+    background 2s ease,
+    opacity 2s ease;
+}
+
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: background 2s ease;
+}
+
+.cl-1 {
+  top: 8%;
+  left: 18%;
+  width: 110px;
+  height: 26px;
+  animation: cloudMove 60s linear infinite;
+}
+.cl-1::before {
+  width: 50px;
+  height: 50px;
+  top: -22px;
+  left: 18px;
+}
+.cl-1::after {
+  width: 38px;
+  height: 38px;
+  top: -12px;
+  right: 22px;
+}
+
+.cl-2 {
+  top: 4%;
+  left: 38%;
+  width: 90px;
+  height: 22px;
+  animation: cloudMove 80s linear infinite;
+  animation-delay: -20s;
+}
+.cl-2::before {
+  width: 42px;
+  height: 42px;
+  top: -18px;
+  left: 14px;
+}
+.cl-2::after {
+  width: 32px;
+  height: 32px;
+  top: -10px;
+  right: 18px;
+}
+
+.cl-3 {
+  top: 12%;
+  left: 60%;
+  width: 80px;
+  height: 20px;
+  animation: cloudMove 70s linear infinite;
+  animation-delay: -35s;
+}
+.cl-3::before {
+  width: 38px;
+  height: 38px;
+  top: -16px;
+  left: 12px;
+}
+.cl-3::after {
+  width: 28px;
+  height: 28px;
+  top: -8px;
+  right: 14px;
+}
+
+.cl-4 {
+  top: 16%;
+  left: 8%;
+  width: 70px;
+  height: 18px;
+  animation: cloudMove 90s linear infinite;
+  animation-delay: -50s;
+}
+.cl-4::before {
+  width: 32px;
+  height: 32px;
+  top: -14px;
+  left: 10px;
+}
+.cl-4::after {
+  width: 24px;
+  height: 24px;
+  top: -7px;
+  right: 12px;
+}
+
+.scene.night .cloud {
+  background: #2a3550;
+  opacity: 0.7;
+}
+
+.scene.night .cloud::before,
+.scene.night .cloud::after {
+  background: #2a3550;
+}
+
+@keyframes cloudMove {
+  from {
+    transform: translateX(-150px);
+  }
+  to {
+    transform: translateX(calc(100vw + 150px));
+  }
+}
+
+/* (City skyline sekarang pakai gambar PNG - lihat section di bawah) */
+
+/* (Bangunan sekarang pakai gambar PNG - lihat section di bawah) */
+
+/* ===== 1. MASJID + KAFE ===== */
+.bld-masjid {
+  width: 180px;
+}
+
+.msj-towers {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+}
+
+.msj-tower {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.msj-tower-spire {
+  width: 2px;
+  height: 8px;
+  background: #d48b1a;
+}
+
+.msj-tower-dome {
+  width: 22px;
+  height: 24px;
+  background: radial-gradient(
+    ellipse at 35% 25%,
+    #b85d80 0%,
+    #a04d6f 35%,
+    #7d3954 75%,
+    #5d2a3f 100%
+  );
+  border-radius: 50% 50% 30% 30% / 65% 65% 35% 35%;
+  margin-top: -1px;
+}
+
+.msj-tower-shaft {
+  width: 16px;
+  height: 50px;
+  background: linear-gradient(90deg, #d4b888 0%, #f0dcb0 50%, #d4b888 100%);
+  border-left: 1px solid #b89a6a;
+  border-right: 1px solid #b89a6a;
+}
+
+.msj-dome-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.msj-crescent {
+  font-size: 14px;
+  color: #d48b1a;
+  line-height: 1;
+}
+
+.msj-dome-shape {
+  width: 75px;
+  height: 80px;
+  background: radial-gradient(
+    ellipse at 35% 25%,
+    #b85d80 0%,
+    #a04d6f 30%,
+    #7d3954 65%,
+    #5d2a3f 100%
+  );
+  border-radius: 50% 50% 5% 5% / 78% 78% 22% 22%;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(93, 42, 63, 0.25);
+}
+
+.msj-dome-shape::before {
+  content: "";
+  position: absolute;
+  inset: 5% 12%;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 6px,
+    rgba(93, 42, 63, 0.18) 6px,
+    rgba(93, 42, 63, 0.18) 7px
+  );
+  border-radius: inherit;
+}
+
+.msj-dome-rim {
+  width: 80px;
+  height: 5px;
+  background: linear-gradient(180deg, #f0a830, #d48b1a);
+  margin-top: -2px;
+  border-radius: 2px;
+}
+
+.msj-body {
+  width: 180px;
+  height: 70px;
+  background: linear-gradient(180deg, #f0dcb0, #d4b888);
+  border: 2px solid #b89a6a;
+  border-bottom: none;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+.msj-arch-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+.msj-arch {
+  flex: 1;
+  max-width: 28px;
+  height: 54px;
+  background: #2a2438;
+  border: 2px solid #d48b1a;
+  border-bottom: none;
+  border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+}
+
+.msj-arch-main {
+  height: 60px;
+  max-width: 32px;
+}
+
+.kafe-base {
+  width: 195px;
+  height: 45px;
+  background: linear-gradient(180deg, #c19a6b 0%, #8b6914 100%);
+  position: relative;
+  border-top: 3px solid #d48b1a;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 2;
+}
+
+.kafe-awning {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  right: 4px;
+  height: 14px;
+  background: repeating-linear-gradient(
+    90deg,
+    #fff 0,
+    #fff 12px,
+    #c0392b 12px,
+    #c0392b 24px
+  );
+  border-radius: 0 0 8px 8px;
+  border-bottom: 2px solid #8e1a1a;
+}
+
+.kafe-sign {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(180deg, #6b4528, #4a3020);
+  padding: 3px 8px;
+  border-radius: 2px;
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  letter-spacing: 1px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.kafe-window {
+  width: 80%;
+  height: 20px;
+  background: linear-gradient(135deg, #b3d9ff, #7ec0ee, #5fa8db);
+  border: 2px solid #d48b1a;
+  margin-bottom: 0;
+}
+
+/* ===== 2. TOKO ===== */
+.bld-toko {
+  width: 100px;
+}
+
+.toko-roof {
+  width: 100px;
+  height: 8px;
+  background: linear-gradient(180deg, #6b4528, #3a2410);
+  border-radius: 1px;
+}
+
+.toko-floor-2 {
+  width: 100px;
+  height: 50px;
+  background: linear-gradient(180deg, #f0c878, #d4a64a);
+  border-left: 1px solid #8b6914;
+  border-right: 1px solid #8b6914;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 4px;
+}
+
+.toko-floor-1 {
+  width: 100px;
+  height: 30px;
+  background: linear-gradient(180deg, #4a8a8a, #2c6e6e);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 4px;
+}
+
+.toko-w {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #b3d9ff, #7ec0ee);
+  border: 1.5px solid #fff;
+  border-radius: 1px;
+}
+
+.toko-floor-1 .toko-w {
+  height: 18px;
+}
+
+.toko-awning {
+  width: 110px;
+  height: 12px;
+  background: repeating-linear-gradient(
+    90deg,
+    #fff 0,
+    #fff 8px,
+    #ec407a 8px,
+    #ec407a 16px
+  );
+  border-radius: 0 0 6px 6px;
+  margin-left: -5px;
+}
+
+.toko-front {
+  width: 100px;
+  height: 30px;
+  background: linear-gradient(180deg, #f5e6c8, #d4b888);
+  border-left: 1px solid #8b6914;
+  border-right: 1px solid #8b6914;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding-top: 4px;
+}
+
+.toko-sign {
+  font-size: 9px;
+  font-weight: bold;
+  color: #fff;
+  letter-spacing: 1px;
+  background: #2e7d47;
+  padding: 2px 8px;
+  border-radius: 2px;
+  border: 1px solid #1b5e20;
+}
+
+.toko-display {
+  width: 90%;
+  height: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(180, 220, 255, 0.85),
+    rgba(135, 180, 230, 0.7)
+  );
+  border: 1px solid #8b6914;
+  margin-top: 4px;
+}
+
+/* ===== 3. GEDUNG UTAMA (PUTIH BESAR) ===== */
+.bld-main {
+  width: 260px;
+}
+
+.main-mansard {
+  width: 260px;
+  height: 32px;
+  background: linear-gradient(180deg, #1a2540 0%, #111a2e 100%);
+  position: relative;
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 0 14px;
+  align-items: flex-start;
+  z-index: 2;
+}
+
+.main-dormer {
+  width: 24px;
+  height: 22px;
+  background: #111a2e;
+  margin-top: -11px;
+  border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+  border: 1px solid #0a1020;
+  position: relative;
+}
+
+.main-dormer::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 12px;
+  background: linear-gradient(135deg, #b3d9ff, #7ec0ee);
+  border: 1px solid #eee;
+  border-radius: 1px;
+  transition:
+    background 2s ease,
+    box-shadow 2s ease;
+}
+
+.scene.night .main-dormer::after {
+  background: linear-gradient(135deg, #fff8b8, #ffd966);
+  box-shadow: 0 0 6px rgba(255, 217, 102, 0.6);
+}
+
+.main-cornice {
+  width: 270px;
+  height: 6px;
+  background: linear-gradient(180deg, #d8d4c8, #95a5a6);
+  border-top: 2px solid #1a2540;
+  margin-top: -1px;
+  z-index: 2;
+}
+
+.main-floor {
+  width: 260px;
+  background: linear-gradient(180deg, #f5f3ee, #e8e6e1);
+  border-left: 2px solid #95a5a6;
+  border-right: 2px solid #95a5a6;
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 14px;
+}
+
+.main-floor-3 {
+  height: 55px;
+}
+.main-floor-2 {
+  height: 75px;
+}
+.main-floor-1 {
+  height: 85px;
+  align-items: flex-end;
+  padding-bottom: 0;
+}
+
+.main-band {
+  width: 262px;
+  height: 4px;
+  background: linear-gradient(180deg, #d8d4c8, #95a5a6);
+}
+
+.main-w {
+  width: 28px;
+  height: 32px;
+  background: linear-gradient(135deg, #b3d9ff 0%, #7ec0ee 50%, #5fa8db 100%);
+  border: 2px solid #f5f3ee;
+  outline: 1px solid #95a5a6;
+  outline-offset: -2px;
+  border-radius: 2px;
+  position: relative;
+  transition:
+    background 2s ease,
+    box-shadow 2s ease;
+}
+
+.main-w-tall {
+  height: 50px;
+}
+
+.main-w::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 100%;
+  background: #f5f3ee;
+}
+
+.main-w::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #f5f3ee;
+}
+
+.main-portico {
+  position: relative;
+  width: 60px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-door {
+  width: 32px;
+  height: 60px;
+  background: linear-gradient(180deg, #4a3525, #2a1a0f);
+  border: 2px solid #d8d4c8;
+  border-radius: 16px 16px 0 0;
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.main-door::after {
+  content: "";
+  position: absolute;
+  top: 55%;
+  right: 4px;
+  width: 3px;
+  height: 3px;
+  background: #d4af37;
+  border-radius: 50%;
+}
+
+.main-step {
+  background: linear-gradient(180deg, #d8d4c8, #95a5a6);
+  border-top: 1px solid #7f8c8d;
+  height: 4px;
+  position: absolute;
+}
+
+.main-step-1 {
+  width: 50px;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.main-step-2 {
+  width: 60px;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.main-base {
+  width: 270px;
+  height: 10px;
+  background: linear-gradient(180deg, #34495e, #1f2d3a);
+  border-radius: 0 0 2px 2px;
+  margin-top: -1px;
+  z-index: 2;
+}
+
+/* Glow window saat malam */
+.scene.night .main-w {
+  background: linear-gradient(135deg, #fff8b8 0%, #ffd966 50%, #f5b942 100%);
+  box-shadow: 0 0 8px rgba(255, 217, 102, 0.5);
+}
+
+.scene.night .toko-w {
+  background: linear-gradient(135deg, #fff8b8, #ffd966);
+  box-shadow: 0 0 6px rgba(255, 217, 102, 0.5);
+}
+
+.scene.night .msj-arch {
+  background: #1a1020;
+  box-shadow: inset 0 0 6px rgba(255, 200, 50, 0.15);
+}
+
+.scene.night .kafe-window {
+  background: linear-gradient(135deg, #fff8b8, #ffd966);
+  box-shadow: 0 0 8px rgba(255, 217, 102, 0.5);
+}
+
+.scene.night .msj-body {
+  background: linear-gradient(180deg, #8a7040, #5a4828);
+  border-color: #3a3018;
+}
+
+.scene.night .kafe-base {
+  background: linear-gradient(180deg, #5a4020, #3a2810);
+}
+
+.scene.night .toko-floor-2 {
+  background: linear-gradient(180deg, #8a7030, #5a4a20);
+}
+
+.scene.night .toko-floor-1 {
+  background: linear-gradient(180deg, #2a4a4a, #1a3232);
+}
+
+.scene.night .toko-front {
+  background: linear-gradient(180deg, #6a5428, #3a3018);
+}
+
+.scene.night .main-floor {
+  background: linear-gradient(180deg, #b8b4a8, #a09890);
+}
+
+.scene.night .sek-floor-2 {
+  background: linear-gradient(180deg, #7a6028, #5a4818);
+}
+
+.scene.night .sek-floor-1 {
+  background: linear-gradient(180deg, #6a5428, #4a3818);
+}
+
+.scene.night .klinik-floor-2 {
+  background: linear-gradient(180deg, #6a1818, #4a0f0f);
+}
+
+.scene.night .apo-floor-3,
+.scene.night .apo-floor-2 {
+  background: linear-gradient(180deg, #7a6038, #5a4828);
+}
+
+.scene.night .apo-floor-1 {
+  background: linear-gradient(180deg, #a0a098, #7a7870);
+}
+
+/* ===== 4. KLINIK ===== */
+.bld-klinik {
+  width: 80px;
+}
+
+.klinik-roof {
+  width: 80px;
+  height: 8px;
+  background: linear-gradient(180deg, #6b4528, #3a2410);
+}
+
+.klinik-floor-2 {
+  width: 80px;
+  height: 50px;
+  background: linear-gradient(180deg, #c0392b, #922b21);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 6px;
+}
+
+.klinik-floor-1 {
+  width: 80px;
+  height: 50px;
+  background: linear-gradient(180deg, #e8a08e, #c0392b);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 5px;
+  position: relative;
+  border-bottom: 4px solid #6b4528;
+}
+
+.klinik-w {
+  width: 18px;
+  height: 24px;
+  background: linear-gradient(135deg, #b3d9ff, #7ec0ee);
+  border: 1.5px solid #fff;
+  border-radius: 1px;
+  transition:
+    background 2s ease,
+    box-shadow 2s ease;
+}
+
+.klinik-sign {
+  background: #c0392b;
+  color: #fff;
+  font-size: 8px;
+  font-weight: bold;
+  padding: 2px 5px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  letter-spacing: 0.5px;
+}
+
+.klinik-cross {
+  font-size: 11px;
+  color: #fff;
+  line-height: 1;
+  background: #27ae60;
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.klinik-door {
+  width: 20px;
+  height: 28px;
+  background: linear-gradient(180deg, #4a3525, #2a1a0f);
+  border: 1.5px solid #fff;
+  border-radius: 4px 4px 0 0;
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.scene.night .klinik-w {
+  background: linear-gradient(135deg, #fff8b8, #ffd966);
+  box-shadow: 0 0 6px rgba(255, 217, 102, 0.5);
+}
+
+/* ===== 5. SEKOLAH ===== */
+.bld-sekolah {
+  width: 310px;
+}
+
+.sek-roof {
+  width: 110px;
+  height: 16px;
+  background: linear-gradient(180deg, #6b4528, #3a2410);
+  position: relative;
+  z-index: 2;
+}
+
+.sek-clock {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border: 2px solid #6b4528;
+  border-radius: 50%;
+}
+
+.sek-clock::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 6px;
+  background: #1a1a1a;
+}
+
+.sek-clock::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  width: 1px;
+  height: 4px;
+  background: #1a1a1a;
+}
+
+.sek-pediment {
+  width: 0;
+  height: 0;
+  border-left: 55px solid transparent;
+  border-right: 55px solid transparent;
+  border-bottom: 14px solid #f5e6c8;
+  margin-top: -1px;
+  position: relative;
+  z-index: 1;
+}
+
+.sek-floor-2 {
+  width: 110px;
+  height: 35px;
+  background: linear-gradient(180deg, #f5e6c8, #d4b888);
+  border-left: 1px solid #8b6914;
+  border-right: 1px solid #8b6914;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+  position: relative;
+}
+
+.sek-sign {
+  font-size: 9px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(180deg, #6b4528, #4a3020);
+  padding: 2px 8px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  border: 1px solid #3a2010;
+}
+
+.sek-floor-2 .sek-w {
+  display: none;
+}
+
+.sek-floor-1 {
+  width: 110px;
+  height: 50px;
+  background: linear-gradient(180deg, #d4b888, #b89a6a);
+  border-left: 1px solid #6b4528;
+  border-right: 1px solid #6b4528;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 4px;
+  padding-bottom: 0;
+}
+
+.sek-w {
+  width: 18px;
+  height: 22px;
+  background: linear-gradient(135deg, #b3d9ff, #7ec0ee);
+  border: 1.5px solid #fff;
+  transition:
+    background 2s ease,
+    box-shadow 2s ease;
+}
+
+.sek-w-tall {
+  height: 36px;
+}
+
+.sek-door {
+  width: 20px;
+  height: 36px;
+  background: linear-gradient(180deg, #4a3525, #2a1a0f);
+  border: 1.5px solid #f5e6c8;
+  border-radius: 8px 8px 0 0;
+}
+
+.sek-base {
+  width: 116px;
+  height: 6px;
+  background: linear-gradient(180deg, #6b4528, #3a2410);
+  border-radius: 0 0 2px 2px;
+  margin-top: -1px;
+}
+
+.scene.night .sek-w {
+  background: linear-gradient(135deg, #fff8b8, #ffd966);
+  box-shadow: 0 0 6px rgba(255, 217, 102, 0.5);
+}
+
+/* ===== 6. APOTEK ===== */
+.bld-apotek {
+  width: 120px;
+}
+
+.apo-roof {
+  width: 120px;
+  height: 6px;
+  background: linear-gradient(180deg, #455a64, #2c3e50);
+  border-radius: 1px;
+}
+
+.apo-floor-3,
+.apo-floor-2 {
+  width: 120px;
+  height: 38px;
+  background: linear-gradient(180deg, #e8d4a8, #c19a6b);
+  border-left: 1px solid #8b6914;
+  border-right: 1px solid #8b6914;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 4px;
+}
+
+.apo-floor-1 {
+  width: 120px;
+  height: 50px;
+  background: linear-gradient(180deg, #ffffff, #e8e6e1);
+  border-left: 1px solid #8b6914;
+  border-right: 1px solid #8b6914;
+  border-bottom: 4px solid #6b4528;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+  position: relative;
+}
+
+.apo-w {
+  width: 22px;
+  height: 28px;
+  background: linear-gradient(135deg, #b3d9ff, #7ec0ee);
+  border: 1.5px solid #fff;
+  border-radius: 1px;
+  transition:
+    background 2s ease,
+    box-shadow 2s ease;
+}
+
+.apo-sign {
+  background: #2e7d47;
+  color: #fff;
+  font-size: 8px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  letter-spacing: 0.5px;
+  border: 1px solid #1b5e20;
+}
+
+.apo-rx {
+  font-size: 11px;
+  color: #fff;
+  line-height: 1;
+  background: #1976d2;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.apo-door {
+  width: 22px;
+  height: 28px;
+  background: linear-gradient(180deg, #4a3525, #2a1a0f);
+  border: 1.5px solid #d8d4c8;
+  border-radius: 2px 2px 0 0;
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.scene.night .apo-w {
+  background: linear-gradient(135deg, #fff8b8, #ffd966);
+  box-shadow: 0 0 6px rgba(255, 217, 102, 0.5);
+}
+
+/* ===== HALAMAN ===== */
+.lawn {
+  position: absolute;
+  bottom: 145px;
+  width: 100%;
+  height: 80px;
+  z-index: 4;
+  background: linear-gradient(180deg, #9ccc65 0%, #7cb342 30%, #689f38 100%);
+  transition: background 2s ease;
+}
+
+.scene.night .lawn {
+  background: linear-gradient(180deg, #2e5d2a 0%, #234722 30%, #1a3618 100%);
+}
+
+/* ===== POHON ===== */
+.trees-row {
+  position: absolute;
+  bottom: 145px;
+  width: 100%;
+  height: 70px;
+  z-index: 7;
+  pointer-events: none;
+}
+
+.ftree {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ft-leaves {
+  width: 40px;
+  height: 45px;
+  background: radial-gradient(ellipse at 35% 30%, #66bb6a, #388e3c 70%);
+  border-radius: 50% 50% 40% 40%;
+  position: relative;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.15));
+  transition: background 2s ease;
+}
+
+.ft-leaves::before,
+.ft-leaves::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 35% 30%, #66bb6a, #388e3c 70%);
+  transition: background 2s ease;
+}
+
+.ft-leaves::before {
+  width: 30px;
+  height: 30px;
+  top: -12px;
+  left: 5px;
+}
+.ft-leaves::after {
+  width: 24px;
+  height: 24px;
+  top: -8px;
+  right: 3px;
+}
+
+.ft-trunk {
+  width: 8px;
+  height: 18px;
+  background: linear-gradient(90deg, #5d4037, #8b6f47, #5d4037);
+  margin-top: -2px;
+}
+
+.scene.night .ft-leaves,
+.scene.night .ft-leaves::before,
+.scene.night .ft-leaves::after {
+  background: radial-gradient(ellipse at 35% 30%, #1e5e22, #0d3812 70%);
+}
+
+.ft-1 {
+  left: 14%;
+}
+.ft-2 {
+  left: 24%;
+}
+.ft-3 {
+  left: 38%;
+}
+.ft-4 {
+  left: 56%;
+}
+.ft-5 {
+  left: 70%;
+}
+.ft-6 {
+  right: 4%;
+}
+
+/* ===== BANGKU ===== */
+.bench {
+  position: absolute;
+  bottom: 150px;
+  width: 50px;
+  height: 22px;
+  z-index: 8;
+}
+
+.bench-1 {
+  left: 8%;
+}
+.bench-2 {
+  left: 30%;
+}
+.bench-3 {
+  right: 10%;
+}
+
+.bn-back {
+  width: 100%;
+  height: 14px;
+  background: linear-gradient(180deg, #8d6e63, #6d4c41);
+  border-radius: 2px 2px 0 0;
+  border: 1px solid #4e342e;
+}
+
+.bn-seat {
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(180deg, #6d4c41, #4e342e);
+  margin-top: 1px;
+}
+
+.bn-leg {
+  width: 4px;
+  height: 8px;
+  background: #4e342e;
+  position: absolute;
+  top: 20px;
+}
+
+.bnl-l {
+  left: 4px;
+}
+.bnl-r {
+  right: 4px;
+}
+
+/* ===== LAMPU JALAN ===== */
+.lamp {
+  position: absolute;
+  bottom: 145px;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lamp-1 {
+  left: 12%;
+}
+.lamp-2 {
+  left: 36%;
+}
+.lamp-3 {
+  left: 62%;
+}
+.lamp-4 {
+  right: 7%;
+}
+
+.lamp-pole {
+  width: 3px;
+  height: 70px;
+  background: linear-gradient(90deg, #4a4a4a, #6a6a6a, #4a4a4a);
+  order: 3;
+}
+
+.lamp-arm {
+  width: 18px;
+  height: 2px;
+  background: #555;
+  margin-bottom: -2px;
+  margin-left: 10px;
+  order: 2;
+}
+
+.lamp-light {
+  width: 12px;
+  height: 14px;
+  background: linear-gradient(180deg, #555, #333);
+  border-radius: 2px 2px 50% 50%;
+  margin-left: 18px;
+  position: relative;
+  order: 1;
+}
+
+.lamp-light::before {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 10px;
+  background: radial-gradient(circle at 50% 30%, #fffacd, #ffeb99 60%, #f5d76e);
+  border-radius: 50%;
+  opacity: 0.5;
+  transition:
+    opacity 2s ease,
+    box-shadow 2s ease;
+}
+
+.scene.night .lamp-light::before {
+  opacity: 1;
+  box-shadow:
+    0 4px 18px rgba(255, 235, 153, 0.8),
+    0 0 30px rgba(255, 235, 153, 0.5);
+}
+
+/* ===== RAMBU ===== */
+.signpost {
+  position: absolute;
+  bottom: 145px;
+  left: 48%;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sign {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d32f2f;
+  background: #fff;
+  border-radius: 50%;
+  position: relative;
+}
+
+.sign::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 2px;
+  background: #d32f2f;
+}
+
+.sign-1 {
+  margin-bottom: 2px;
+}
+
+.sign-2 {
+  border-color: #1976d2;
+  background: #1976d2;
+  border-radius: 2px;
+}
+
+.sign-2::after {
+  background: #fff;
+  width: 12px;
+  height: 2px;
+}
+
+.sign-pole {
+  width: 3px;
+  height: 35px;
+  background: linear-gradient(90deg, #555, #888, #555);
+}
+
+/* ===== ORANG-ORANG ===== */
+.people {
+  position: absolute;
+  bottom: 145px;
+  width: 100%;
+  height: 50px;
+  z-index: 9;
+  pointer-events: none;
+}
+
+.ppl {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 14px;
+}
+
+.ppl-1 {
+  left: 11%;
+}
+.ppl-2 {
+  left: 18%;
+}
+.ppl-3 {
+  left: 32%;
+}
+.ppl-4 {
+  left: 39%;
+}
+.ppl-5 {
+  left: 47%;
+}
+.ppl-6 {
+  left: 54%;
+}
+.ppl-7 {
+  left: 60%;
+}
+.ppl-8 {
+  right: 22%;
+}
+
+.ppl-head {
+  width: 9px;
+  height: 9px;
+  background: linear-gradient(180deg, #ffd9b3, #ffbf94);
+  border-radius: 50%;
+}
+
+.ppl-hijab {
+  width: 13px;
+  height: 12px;
+  border-radius: 7px 7px 4px 4px;
+  position: relative;
+  z-index: 2;
+}
+
+.ppl-hijab::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 9px;
+  background: inherit;
+  border-radius: 0 0 6px 6px;
+  z-index: -1;
+}
+
+.ppl-hijab-pink {
+  background: linear-gradient(180deg, #f48fb1, #ec407a);
+}
+.ppl-hijab-green {
+  background: linear-gradient(180deg, #81c784, #388e3c);
+}
+.ppl-hijab-purple {
+  background: linear-gradient(180deg, #ce93d8, #8e24aa);
+}
+
+.ppl-hijab + .ppl-head {
+  width: 6px;
+  height: 6px;
+  margin-top: -4px;
+  border-radius: 0 0 50% 50%;
+}
+
+.ppl-body {
+  width: 14px;
+  height: 18px;
+  border-radius: 3px 3px 1px 1px;
+  margin-top: -1px;
+}
+
+.ppl-shirt-blue {
+  background: linear-gradient(180deg, #42a5f5, #1565c0);
+}
+.ppl-shirt-grey {
+  background: linear-gradient(180deg, #b0bec5, #607d8b);
+}
+.ppl-shirt-white {
+  background: linear-gradient(180deg, #fff, #e0e0e0);
+  border: 1px solid #999;
+}
+.ppl-shirt-orange {
+  background: linear-gradient(180deg, #ffa726, #ef6c00);
+}
+.ppl-shirt-yellow {
+  background: linear-gradient(180deg, #ffee58, #fbc02d);
+}
+
+.ppl-dress-pink {
+  background: linear-gradient(180deg, #ec407a, #c2185b);
+  width: 16px;
+  height: 22px;
+}
+.ppl-dress-green {
+  background: linear-gradient(180deg, #66bb6a, #2e7d32);
+  width: 16px;
+  height: 22px;
+}
+.ppl-dress-purple {
+  background: linear-gradient(180deg, #ab47bc, #6a1b9a);
+  width: 16px;
+  height: 22px;
+}
+
+.ppl-legs {
+  width: 12px;
+  height: 10px;
+  background: linear-gradient(180deg, #424242, #212121);
+  margin-top: -1px;
+  position: relative;
+}
+
+.ppl-legs::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===== TROTOAR ===== */
+.sidewalk {
+  position: absolute;
+  bottom: 110px;
+  width: 100%;
+  height: 35px;
+  z-index: 8;
+  background: linear-gradient(180deg, #d7ccc8 0%, #bcaaa4 100%);
+  border-top: 2px solid #a1887f;
+  border-bottom: 2px solid #8d6e63;
+  transition: background 2s ease;
+}
+
+.sidewalk::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(141, 110, 99, 0.4) 0,
+      rgba(141, 110, 99, 0.4) 1px,
+      transparent 1px,
+      transparent 60px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(141, 110, 99, 0.3) 0,
+      rgba(141, 110, 99, 0.3) 1px,
+      transparent 1px,
+      transparent 18px
+    );
+}
+
+.scene.night .sidewalk {
+  background: linear-gradient(180deg, #5a4a3a 0%, #3a2e22 100%);
+}
+
+/* ===== JALAN RAYA ===== */
+.road {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 110px;
+  background: linear-gradient(180deg, #424242 0%, #2e2e2e 50%, #1a1a1a 100%);
+  z-index: 8;
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.road::before {
+  content: "";
+  position: absolute;
+  top: 30%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.5) 0,
+    rgba(255, 255, 255, 0.5) 30px,
+    transparent 30px,
+    transparent 50px
+  );
+}
+
+.road::after {
+  content: "";
+  position: absolute;
+  bottom: 30%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.5) 0,
+    rgba(255, 255, 255, 0.5) 30px,
+    transparent 30px,
+    transparent 50px
+  );
+}
+
+.road-line {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 4px;
+  background: #ffeb3b;
+  border-radius: 1px;
+  box-shadow: 0 0 4px rgba(255, 235, 59, 0.3);
+}
+
+.rl-1 {
+  left: 5%;
+}
+.rl-2 {
+  left: 20%;
+}
+.rl-3 {
+  left: 35%;
+}
+.rl-4 {
+  left: 65%;
+}
+.rl-5 {
+  left: 80%;
+}
+.rl-6 {
+  left: 95%;
+}
+
+.zebra {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.zb {
+  width: 100%;
+  height: 10px;
+  background: #f5f5f5;
+}
+
+/* ===== BUS KUNING ===== */
+.bus {
+  position: absolute;
+  bottom: 38px;
+  z-index: 11;
+  width: 100px;
+  height: 32px;
+  animation: busDrive 18s linear infinite;
+}
+
+.bus-body {
+  width: 100%;
+  height: 28px;
+  background: linear-gradient(180deg, #ffd700 0%, #f5b942 100%);
+  border-radius: 6px 4px 4px 4px;
+  border: 2px solid #c4960a;
+  position: relative;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.bus-windows {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  right: 25px;
+  height: 10px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(180, 220, 255, 0.9) 0,
+    rgba(180, 220, 255, 0.9) 14px,
+    #c4960a 14px,
+    #c4960a 16px
+  );
+  border-radius: 2px;
+}
+
+.bus-door {
+  position: absolute;
+  bottom: 4px;
+  right: 8px;
+  width: 12px;
+  height: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(180, 220, 255, 0.9),
+    rgba(135, 180, 230, 0.9)
+  );
+  border: 1px solid #c4960a;
+  border-radius: 2px;
+}
+
+.bus-wheel {
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle at 35% 35%, #555, #1a1a1a 60%);
+  border-radius: 50%;
+  position: absolute;
+  bottom: -4px;
+  border: 2px solid #2a2a2a;
+}
+
+.bw-f {
+  right: 10px;
+}
+.bw-b {
+  left: 10px;
+}
+
+.bus-headlight {
+  width: 5px;
+  height: 5px;
+  background: radial-gradient(circle, #fffacd, #ffd700);
+  border-radius: 50%;
+  position: absolute;
+  right: 1px;
+  top: 16px;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+@keyframes busDrive {
+  from {
+    left: -150px;
+  }
+  to {
+    left: 110%;
+  }
+}
+
+/* ===== KENDARAAN ===== */
+.vehicle {
+  position: absolute;
+  bottom: 22px;
+  z-index: 11;
+}
+
+.car-1 {
+  animation: driveR 14s linear infinite;
+}
+.car-2 {
+  animation: driveL 18s linear infinite;
+  bottom: 65px;
+  transform: scaleX(-1);
+}
+.car-3 {
+  animation: driveR 22s linear infinite;
+  animation-delay: -8s;
+}
+
+.car-body {
+  width: 60px;
+  height: 16px;
+  border-radius: 4px 8px 6px 4px;
+  position: relative;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+.car-1 .car-body {
+  background: linear-gradient(180deg, #ef5350, #c62828);
+}
+.car-2 .car-body {
+  background: linear-gradient(180deg, #42a5f5, #1565c0);
+}
+.car-3 .car-body {
+  background: linear-gradient(180deg, #ffa726, #ef6c00);
+}
+
+.car-top {
+  width: 36px;
+  height: 12px;
+  border-radius: 5px 6px 0 0;
+  position: absolute;
+  top: -11px;
+  left: 10px;
+}
+
+.car-1 .car-top {
+  background: linear-gradient(180deg, #c62828, #8e1a1a);
+}
+.car-2 .car-top {
+  background: linear-gradient(180deg, #1565c0, #0d47a1);
+}
+.car-3 .car-top {
+  background: linear-gradient(180deg, #ef6c00, #b55400);
+}
+
+.car-window {
+  position: absolute;
+  top: -8px;
+  width: 14px;
+  height: 7px;
+  background: linear-gradient(
+    135deg,
+    rgba(180, 220, 255, 0.9),
+    rgba(135, 180, 230, 0.7)
+  );
+  border-radius: 2px 3px 0 0;
+}
+
+.car-window-l {
+  left: 14px;
+}
+.car-window-r {
+  left: 32px;
+}
+
+.car-wheel {
+  width: 11px;
+  height: 11px;
+  background: radial-gradient(circle at 35% 35%, #555, #1a1a1a 60%);
+  border-radius: 50%;
+  position: absolute;
+  bottom: -5px;
+  border: 2px solid #2a2a2a;
+}
+
+.cw-f {
+  right: 6px;
+}
+.cw-b {
+  left: 6px;
+}
+
+.car-headlight {
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, #fffacd, #ffd700);
+  border-radius: 50%;
+  position: absolute;
+  right: 1px;
+  top: 6px;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+@keyframes driveR {
+  from {
+    left: -120px;
+  }
+  to {
+    left: 110%;
+  }
+}
+@keyframes driveL {
+  from {
+    right: -120px;
+    left: auto;
+  }
+  to {
+    right: 110%;
+    left: auto;
+  }
+}
+
+/* ===== RESPONSIVE EXTRA ALAM ===== */
+@media (max-width: 800px) {
+  .people {
+    transform: scale(0.8);
+    transform-origin: bottom center;
+  }
+  .lamp {
+    transform: scale(0.85);
+    transform-origin: bottom center;
+  }
+}
+
+@media (max-width: 600px) {
+  .lamp-1,
+  .lamp-4 {
+    display: none;
+  }
+  .ppl-1,
+  .ppl-2,
+  .ppl-7,
+  .ppl-8 {
+    display: none;
+  }
+}
+
+/* ===== POSISI BENCH ===== */
+.bench-1 {
+  left: 10%;
+}
+.bench-2 {
+  left: 32%;
+}
+.bench-3 {
+  right: 8%;
+}
+
+/* Lamp head dengan glow di malam */
+.scene.night .lamp-light {
+  box-shadow: 0 0 15px rgba(255, 235, 153, 0.6);
+}
+
+/* Headlight mobil glow di malam */
+.scene.night .car-headlight,
+.scene.night .bus-headlight {
+  box-shadow:
+    0 0 12px rgba(255, 215, 0, 0.9),
+    0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+/* Bus windows glow lampu malam */
+.scene.night .bus-windows,
+.scene.night .bus-door {
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 235, 100, 0.85) 0,
+    rgba(255, 235, 100, 0.85) 14px,
+    #c4960a 14px,
+    #c4960a 16px
+  );
+}
+
+.scene.night .bus-door {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 235, 100, 0.85),
+    rgba(245, 200, 60, 0.9)
+  );
+}
+
+/* ===== BANGUNAN GAMBAR (PNG) ===== */
+
+/* Day/Night image switching */
+.bld-img img.img-day,
+.skyline-img img.img-day {
+  display: block;
+}
+.bld-img img.img-night,
+.skyline-img img.img-night {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.scene.night .bld-img img.img-day,
+.scene.night .skyline-img img.img-day {
+  display: none;
+}
+.scene.night .bld-img img.img-night,
+.scene.night .skyline-img img.img-night {
+  display: block;
+}
+
+.bld-img img,
+.skyline-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+}
+
+/* --- Background Kota (paling belakang) --- */
+.bg-kota {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bg-kota img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom;
+}
+
+.bg-kota img.img-night {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.bg-kota img.img-day {
+  display: block;
+}
+.scene.night .bg-kota img.img-day {
+  display: none;
+}
+.scene.night .bg-kota img.img-night {
+  display: block;
+}
+
+/* --- City Skyline Belakang (gambar) --- */
+.city-back {
+  position: absolute;
+  bottom: 22%;
+  width: 100%;
+  height: 250px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.skyline-img {
+  position: absolute;
+  bottom: 0;
+}
+
+.skyline-img img {
+  height: 100%;
+  width: auto;
+}
+
+/* Skyline kiri (di belakang masjid) */
+.sky-left-1 {
+  left: 0%;
+  height: 150px;
+}
+.sky-left-2 {
+  left: 5%;
+  height: 200px;
+}
+.sky-left-3 {
+  left: 10%;
+  height: 163px;
+}
+.sky-left-4 {
+  left: 15%;
+  height: 175px;
+}
+
+/* Skyline kanan (di belakang apotek) */
+.sky-right-1 {
+  right: 20%;
+  height: 175px;
+}
+.sky-right-2 {
+  right: 14%;
+  height: 225px;
+}
+.sky-right-3 {
+  right: 8%;
+  height: 188px;
+}
+.sky-right-4 {
+  right: 3%;
+  height: 163px;
+}
+.sky-right-5 {
+  right: 24%;
+  height: 150px;
+}
+.sky-right-6 {
+  right: 0%;
+  height: 181px;
+}
+
+/* --- Buildings Row (bangunan utama depan) --- */
+.buildings-row {
+  position: absolute;
+  bottom: 22%;
+  left: 0;
+  width: 100%;
+  height: 280px;
+  z-index: 5;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  pointer-events: none;
+}
+
+.bld-img {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.bld-img img {
+  display: block;
+}
+
+/* Ukuran masing-masing bangunan (ditata rapat agar selaras dan menempel tanpa overlap berlebih) */
+.bld-cafe {
+  height: 160px;
+  width: 160px;
+  z-index: 5;
+  margin-right: -15px;
+}
+.bld-masjid {
+  height: 350px;
+  width: 440px;
+  z-index: 4;
+  margin-left: -15px;
+  margin-right: -45px;
+}
+.bld-toko {
+  height: 170px;
+  width: 130px;
+  z-index: 6;
+  margin-left: -20px;
+  margin-right: -25px;
+}
+.bld-asrama {
+  height: 235px;
+  width: 370px;
+  z-index: 3;
+  margin-left: -60px;
+  margin-right: -40px;
+}
+.bld-klinik {
+  height: 230px;
+  width: 160px;
+  z-index: 5;
+  margin-left: -40px;
+  margin-right: -30px;
+}
+.bld-sekolah {
+  height: 380px;
+  width: 380px;
+  z-index: 4;
+  margin-left: -50px;
+  margin-right: -25px;
+}
+.bld-apotek {
+  height: 210px;
+  width: 130px;
+  z-index: 6;
+  margin-left: -15px;
+}
+
+/* Responsive buildings */
+@media (max-width: 1400px) {
+  .buildings-row {
+    transform: scale(0.85);
+    transform-origin: bottom center;
+  }
+}
+
+@media (max-width: 1100px) {
+  .buildings-row {
+    transform: scale(0.65);
+    transform-origin: bottom center;
+  }
+  .city-back {
+    transform: scale(0.7);
+    transform-origin: bottom center;
+  }
+}
+
+@media (max-width: 800px) {
+  .buildings-row {
+    transform: scale(0.5);
+    transform-origin: bottom center;
+  }
+  .city-back {
+    transform: scale(0.55);
+    transform-origin: bottom center;
+  }
+}
+
+@media (max-width: 600px) {
+  .buildings-row {
+    transform: scale(0.35);
+    transform-origin: bottom center;
+  }
+  .city-back {
+    display: none;
+  }
+}

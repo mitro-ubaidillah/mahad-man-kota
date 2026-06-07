@@ -5,17 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Admin Ma’had') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800|merriweather:400,700&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-<body class="font-sans antialiased text-gray-900 bg-gray-100">
-        <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden bg-gray-100">
+<body class="font-sans antialiased text-gray-900 bg-[#f8f5ec]" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+        <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(230,244,234,0.9),transparent_34rem),linear-gradient(135deg,#fbfaf6,#f8f5ec)]">
             
             <!-- Sidebar Navigation -->
             @include('layouts.sidebar')
@@ -24,7 +24,7 @@
             <div class="flex-1 flex flex-col overflow-hidden">
                 
                 <!-- Top Nav / Header Header -->
-                <header class="flex items-center justify-between px-6 py-4 bg-white border-b-4 border-emerald-600">
+                <header class="flex items-center justify-between px-6 py-4 bg-white/85 backdrop-blur-xl border-b border-emerald-900/10 shadow-[0_10px_35px_rgba(16,36,24,0.06)]">
                     <div class="flex items-center">
                         <button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none lg:hidden">
                             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,7 +33,7 @@
                         </button>
                         
                         @if (isset($header))
-                            <h2 class="ml-4 font-semibold text-xl text-gray-800 leading-tight">
+                            <h2 class="ml-4 font-black text-xl text-[#102418] leading-tight">
                                 {{ $header }}
                             </h2>
                         @endif
@@ -42,7 +42,7 @@
                     <div class="flex items-center">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="text-sm font-medium text-gray-700 hover:text-red-500 flex items-center">
+                            <button type="submit" class="inline-flex items-center rounded-full border border-emerald-900/10 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition">
                                 <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
@@ -53,7 +53,7 @@
                 </header>
 
                 <!-- Page Content -->
-                <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
+                <main class="flex-1 overflow-x-hidden overflow-y-auto bg-transparent">
                     <div class="container mx-auto px-6 py-8">
                         {{-- Flash messages as modal pop-up using Alpine (auto-close for success) --}}
                         @if(session('success') || session('error') || session('info'))
