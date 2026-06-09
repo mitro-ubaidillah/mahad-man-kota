@@ -27,38 +27,44 @@
         '22.00' => 'Istirahat',
     ];
 
-    $news = [
+    $fallbackNews = [
         ['date' => '12 Rajab 1447 H', 'title' => 'Halaqah Pekanan Santri', 'description' => 'Santri mengikuti halaqah tematik tentang adab menuntut ilmu dan menjaga waktu.'],
         ['date' => '18 Rajab 1447 H', 'title' => 'Kegiatan Kebersihan Asrama', 'description' => 'Pembiasaan kebersihan lingkungan dilakukan bersama untuk menumbuhkan tanggung jawab.'],
         ['date' => '25 Rajab 1447 H', 'title' => 'Muhadharah Malam Jumat', 'description' => 'Latihan keberanian berbicara dan menyampaikan nasihat di hadapan teman sebaya.'],
+    ];
+
+    $fallbackAnnouncements = [
+        ['title' => 'Pendaftaran Santri Baru', 'description' => 'Informasi jadwal dan alur pendaftaran akan diumumkan melalui halaman ini.'],
+        ['title' => 'Jadwal Tes Seleksi', 'description' => 'Calon santri akan mengikuti tes dasar membaca Al-Qur’an dan wawancara ringan.'],
+        ['title' => 'Perlengkapan Santri', 'description' => 'Daftar perlengkapan akan diberikan setelah calon santri dinyatakan diterima.'],
     ];
 @endphp
 
 <x-public-layout title="Ma’had Islam Sekolah - Membentuk Generasi Berilmu dan Berakhlak">
     <section class="hero-section">
-        <div class="hero-section__content">
-            <span class="hero-section__label">Asrama Islam Sekolah</span>
-            <h1>Membentuk Generasi Berilmu dan Berakhlak</h1>
-            <p>Lingkungan pembinaan Islam yang hangat, terarah, dan mendukung tumbuhnya karakter santri.</p>
-            <div class="hero-section__actions">
-                <a href="{{ route('public.profile') }}" class="btn-primary">Tentang Ma’had</a>
-                <a href="{{ route('public.programs') }}" class="btn-outline">Lihat Program</a>
+        <img src="{{ asset('images/banner.png') }}" alt="Ilustrasi suasana Ma'had" class="hero-section__image" />
+        <div class="hero-section__overlay"></div>
+        <div class="hero-section__inner">
+            <div class="hero-section__content">
+                <span class="hero-section__label">
+                    <span class="hero-section__label-icon"></span>
+                    Asrama Islam Sekolah
+                </span>
+                <h1 class="hero-section__title">Membentuk Generasi Berilmu dan Berakhlak</h1>
+                <p>Ma’had kami menghadirkan lingkungan pembinaan yang islami, hangat, dan bertumbuh untuk para santri.</p>
+                <div class="hero-section__actions">
+                    <a href="{{ route('public.profile') }}" class="btn-primary">Tentang Ma’had <span aria-hidden="true">-></span></a>
+                    <a href="{{ route('public.programs') }}" class="btn-outline">Lihat Program <span aria-hidden="true">-></span></a>
+                </div>
             </div>
-        </div>
-
-        <div class="hero-section__visual" aria-hidden="true">
-            <div class="hero-illustration">
-                <div class="hero-illustration__sun"></div>
-                <div class="hero-illustration__mosque"></div>
-                <div class="hero-illustration__tree hero-illustration__tree--left"></div>
-                <div class="hero-illustration__tree hero-illustration__tree--right"></div>
-                <div class="hero-illustration__gazebo">
-                    <span></span>
+            <div class="hero-section__summary">
+                <div class="hero-section__quote-mark" aria-hidden="true">“</div>
+                <p>"Sebaik-baik kalian adalah yang belajar Al-Qur’an dan mengajarkannya." <strong>(HR. Bukhari)</strong></p>
+                <div class="hero-section__summary-divider"></div>
+                <div class="hero-section__focus">
+                    <span aria-hidden="true">⌁</span>
+                    <p>Fokus pada pembinaan ilmu, akhlak, dan kemandirian <strong>setiap hari.</strong></p>
                 </div>
-                <div class="hero-illustration__halaqah">
-                    <i></i><i></i><i></i><i></i><i></i>
-                </div>
-                <div class="hero-illustration__path"></div>
             </div>
         </div>
     </section>
@@ -144,17 +150,36 @@
         <x-public.section-heading
             eyebrow="Berita dan Pengumuman"
             title="Kabar terbaru dari lingkungan Ma’had"
-            description="Untuk tahap awal, konten dibuat statis agar mudah disesuaikan sebelum memakai database."
+            description="Informasi terbaru seputar kegiatan, kabar resmi, dan pengumuman penting Ma’had."
         />
         <div class="news-grid">
-            @foreach ($news as $item)
-                <x-public.news-card :date="$item['date']" :title="$item['title']" :description="$item['description']" />
-            @endforeach
+            @forelse ($latestNews as $article)
+                <x-public.news-card
+                    :date="$article->published_at?->translatedFormat('d F Y') ?? $article->created_at->translatedFormat('d F Y')"
+                    :title="$article->title"
+                    :description="$article->excerpt ?: Str::limit(strip_tags($article->content), 140)"
+                    :url="$article->publicUrl()"
+                    :thumbnail="$article->thumbnail ? Storage::url($article->thumbnail) : null"
+                    :category="$article->category"
+                />
+            @empty
+                @foreach ($fallbackNews as $item)
+                    <x-public.news-card :date="$item['date']" :title="$item['title']" :description="$item['description']" />
+                @endforeach
+            @endforelse
         </div>
+
         <div class="announcement-grid">
-            <x-public.announcement-card title="Pendaftaran Santri Baru" description="Informasi jadwal dan alur pendaftaran akan diumumkan melalui halaman ini." />
-            <x-public.announcement-card title="Jadwal Tes Seleksi" description="Calon santri akan mengikuti tes dasar membaca Al-Qur’an dan wawancara ringan." />
-            <x-public.announcement-card title="Perlengkapan Santri" description="Daftar perlengkapan akan diberikan setelah calon santri dinyatakan diterima." />
+            @forelse ($latestAnnouncements as $announcement)
+                <x-public.announcement-card
+                    :title="$announcement->title"
+                    :description="$announcement->excerpt ?: Str::limit(strip_tags($announcement->content), 140)"
+                />
+            @empty
+                @foreach ($fallbackAnnouncements as $announcement)
+                    <x-public.announcement-card :title="$announcement['title']" :description="$announcement['description']" />
+                @endforeach
+            @endforelse
         </div>
     </section>
 
@@ -162,15 +187,26 @@
         <x-public.section-heading
             eyebrow="Galeri"
             title="Ilustrasi suasana Ma’had"
-            description="Sementara belum memakai foto asli, galeri dibuat dengan visual lembut dan aman digunakan."
+            description="Cuplikan kegiatan dan suasana pembinaan yang diambil dari galeri Ma’had."
         />
         <div class="gallery-grid">
-            @foreach (['Halaqah pagi', 'Kajian adab', 'Belajar malam', 'Kegiatan kebersihan', 'Olahraga santri', 'Muhadharah'] as $caption)
+            @forelse ($galleryItems as $galleryItem)
                 <figure>
-                    <span></span>
-                    <figcaption>{{ $caption }}</figcaption>
+                    @if ($galleryItem->thumbnail)
+                        <img src="{{ Storage::url($galleryItem->thumbnail) }}" alt="Galeri {{ $galleryItem->title }}">
+                    @else
+                        <span></span>
+                    @endif
+                    <figcaption>{{ $galleryItem->title }}</figcaption>
                 </figure>
-            @endforeach
+            @empty
+                @foreach (['Halaqah pagi', 'Kajian adab', 'Belajar malam', 'Kegiatan kebersihan', 'Olahraga santri', 'Muhadharah'] as $caption)
+                    <figure>
+                        <span></span>
+                        <figcaption>{{ $caption }}</figcaption>
+                    </figure>
+                @endforeach
+            @endforelse
         </div>
     </section>
 

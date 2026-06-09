@@ -2,17 +2,32 @@
     <section class="page-hero">
         <span>Galeri</span>
         <h1>Visual suasana Ma’had yang lembut dan edukatif</h1>
-        <p>Galeri memakai ilustrasi sementara, sehingga tidak bergantung pada foto bangunan asli.</p>
+        <p>Kumpulan dokumentasi kegiatan dan suasana pembinaan santri di lingkungan Ma’had.</p>
     </section>
 
     <section class="section">
-        <div class="gallery-grid">
-            @foreach (['Halaqah pagi', 'Kajian adab', 'Belajar malam', 'Kebersihan lingkungan', 'Olahraga santri', 'Muhadharah', 'Tilawah bersama', 'Pendampingan belajar', 'Suasana asrama'] as $caption)
-                <figure>
-                    <span></span>
-                    <figcaption>{{ $caption }}</figcaption>
-                </figure>
-            @endforeach
-        </div>
+        @if ($galleryItems->count())
+            <div class="gallery-grid">
+                @foreach ($galleryItems as $galleryItem)
+                    <figure>
+                        @if ($galleryItem->thumbnail)
+                            <img src="{{ Storage::url($galleryItem->thumbnail) }}" alt="Galeri {{ $galleryItem->title }}">
+                        @else
+                            <span></span>
+                        @endif
+                        <figcaption>{{ $galleryItem->title }}</figcaption>
+                    </figure>
+                @endforeach
+            </div>
+
+            <div class="public-pagination">
+                {{ $galleryItems->links() }}
+            </div>
+        @else
+            <div class="public-empty">
+                <strong>Belum ada galeri yang dipublikasikan.</strong>
+                <p>Silakan tambahkan gambar dan nama kegiatan dari dashboard Admin Artikel.</p>
+            </div>
+        @endif
     </section>
 </x-public-layout>

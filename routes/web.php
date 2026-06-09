@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'pages.home')->name('home');
+Route::get('/', [PublicArticleController::class, 'home'])->name('home');
 Route::view('/profil', 'pages.profile')->name('public.profile');
 Route::view('/program', 'pages.programs')->name('public.programs');
 Route::view('/kehidupan-mahad', 'pages.life')->name('public.life');
@@ -27,7 +27,7 @@ Route::get('/berita', [PublicArticleController::class, 'news'])->name('public.ne
 Route::get('/berita/{slug}', [PublicArticleController::class, 'showNews'])->name('public.news.show');
 Route::get('/artikel', [PublicArticleController::class, 'articles'])->name('public.articles');
 Route::get('/artikel/{slug}', [PublicArticleController::class, 'showArticle'])->name('public.articles.show');
-Route::view('/galeri', 'pages.gallery')->name('public.gallery');
+Route::get('/galeri', [PublicArticleController::class, 'gallery'])->name('public.gallery');
 Route::view('/kontak', 'pages.contact')->name('public.contact');
 
 use App\Models\Santri;
@@ -78,6 +78,13 @@ Route::prefix('admin-mahad')
 
         Route::post('articles/trix-attachments', [ArticleController::class, 'uploadAttachment'])
             ->name('articles.trix-attachments.store');
+
+        Route::get('gallery', [ArticleController::class, 'galleryIndex'])->name('gallery.index');
+        Route::get('gallery/create', [ArticleController::class, 'galleryCreate'])->name('gallery.create');
+        Route::post('gallery', [ArticleController::class, 'galleryStore'])->name('gallery.store');
+        Route::get('gallery/{article}/edit', [ArticleController::class, 'galleryEdit'])->name('gallery.edit');
+        Route::put('gallery/{article}', [ArticleController::class, 'galleryUpdate'])->name('gallery.update');
+        Route::delete('gallery/{article}', [ArticleController::class, 'galleryDestroy'])->name('gallery.destroy');
 
         Route::resource('articles', ArticleController::class);
     });

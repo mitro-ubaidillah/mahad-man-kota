@@ -4,7 +4,7 @@
     <x-ui-card class="space-y-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <x-ui-section-heading description="Katalog template pesan otomatis untuk pengingat dan notifikasi">Template WhatsApp</x-ui-section-heading>
-            <a href="{{ route('admin.wa-template.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition">
+            <a href="{{ route('admin.wa-template.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-xl transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                 Tambah Template
             </a>
@@ -38,13 +38,13 @@
                         </td>
                         <td class="px-6 py-3 text-center whitespace-nowrap">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('admin.wa-template.edit', $tpl->id) }}" class="inline-flex items-center px-3 py-1.5 border border-emerald-600 text-emerald-700 hover:bg-emerald-50 text-xs font-medium rounded-md transition">
+                                <a href="{{ route('admin.wa-template.edit', $tpl->id) }}" class="inline-flex items-center px-3 py-1.5 border border-emerald-600 text-emerald-700 hover:bg-emerald-50 text-xs font-semibold rounded-xl transition">
                                     Edit
                                 </a>
                                 <form action="{{ route('admin.wa-template.destroy', $tpl->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus template ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md transition">
+                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-xl transition">
                                         Hapus
                                     </button>
                                 </form>

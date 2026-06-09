@@ -112,8 +112,8 @@
                 <h3 class="text-center text-lg font-semibold text-gray-900">Hapus Admin</h3>
                 <p class="mt-2 text-center text-sm text-gray-600">Yakin ingin menghapus user <strong x-text="confirmEmail"></strong>?</p>
                 <div class="mt-5 flex justify-center gap-3">
-                    <button type="button" @click="confirmOpen = false" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">Batal</button>
-                    <button type="button" @click.prevent="doConfirm()" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition">Ya, Hapus</button>
+                    <button type="button" @click="confirmOpen = false" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">Batal</button>
+                    <button type="button" @click.prevent="doConfirm()" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl transition">Ya, Hapus</button>
                 </div>
             </div>
         </div>

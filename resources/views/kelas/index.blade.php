@@ -29,8 +29,8 @@
                         <p id="file-name" class="mt-3 text-sm text-emerald-700 font-medium"></p>
                     </div>
                     <div class="mt-4 flex justify-end gap-3 pt-3 border-t border-gray-100">
-                        <button type="button" id="cancel-import" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition">Batal</button>
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition">Upload & Import</button>
+                        <button type="button" id="cancel-import" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">Batal</button>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-xl transition">Upload & Import</button>
                     </div>
                 </form>
                 <p class="mt-3 text-xs text-gray-500 leading-relaxed">

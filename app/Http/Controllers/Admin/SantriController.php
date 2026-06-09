@@ -54,28 +54,12 @@ class SantriController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'nis' => 'nullable|string|max:255|unique:santris,nis',
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:santris,email',
-            'phone' => 'nullable|string|max:50',
-            'kelas_id' => 'nullable|exists:kelas,id',
-            'kelas_name' => 'nullable|string|max:255',
-            'birth_date' => 'nullable|date',
-        ]);
-
-        // If kelas_name provided, create/find kelas
-        if (empty($data['kelas_id']) && !empty($data['kelas_name'])) {
-            $k = Kelas::firstOrCreate(['name' => $data['kelas_name']]);
-            $data['kelas_id'] = $k->id;
-        }
-
-        // remove kelas_name before create
-        unset($data['kelas_name']);
+        $isDraft = $request->input('form_action') === 'draft';
+        $data = $this->validatedSantriData($request, null, $isDraft);
 
         Santri::create($data);
 
-        session()->flash('success', __('Santri created successfully.'));
+        session()->flash('success', $isDraft ? 'Draft santri berhasil disimpan.' : __('Santri created successfully.'));
         return redirect()->route('santris.index');
     }
 
@@ -87,26 +71,12 @@ class SantriController extends Controller
 
     public function update(Request $request, Santri $santri)
     {
-        $data = $request->validate([
-            'nis' => 'nullable|string|max:255|unique:santris,nis,' . $santri->id,
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:santris,email,' . $santri->id,
-            'phone' => 'nullable|string|max:50',
-            'kelas_id' => 'nullable|exists:kelas,id',
-            'kelas_name' => 'nullable|string|max:255',
-            'birth_date' => 'nullable|date',
-        ]);
-
-        if (empty($data['kelas_id']) && !empty($data['kelas_name'])) {
-            $k = Kelas::firstOrCreate(['name' => $data['kelas_name']]);
-            $data['kelas_id'] = $k->id;
-        }
-
-        unset($data['kelas_name']);
+        $isDraft = $request->input('form_action') === 'draft';
+        $data = $this->validatedSantriData($request, $santri, $isDraft);
 
         $santri->update($data);
 
-        session()->flash('success', __('Santri updated successfully.'));
+        session()->flash('success', $isDraft ? 'Draft santri berhasil diperbarui.' : __('Santri updated successfully.'));
         return redirect()->route('santris.index');
     }
 
@@ -179,5 +149,36 @@ class SantriController extends Controller
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
+    }
+
+    private function validatedSantriData(Request $request, ?Santri $santri = null, bool $isDraft = false): array
+    {
+        $santriId = $santri?->id;
+        $data = $request->validate([
+            'nis' => 'nullable|string|max:255|unique:santris,nis' . ($santriId ? ',' . $santriId : ''),
+            'name' => [$isDraft ? 'nullable' : 'required', 'string', 'max:255'],
+            'email' => 'nullable|email|unique:santris,email' . ($santriId ? ',' . $santriId : ''),
+            'phone' => 'nullable|string|max:50',
+            'kelas_id' => 'nullable|exists:kelas,id',
+            'kelas_name' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date',
+            'address' => 'nullable|string|max:1000',
+            'previous_school' => 'nullable|string|max:255',
+            'guardian_name' => [$isDraft ? 'nullable' : 'required', 'string', 'max:255'],
+            'guardian_relation' => 'nullable|string|max:100',
+            'guardian_phone' => [$isDraft ? 'nullable' : 'required', 'string', 'max:50'],
+            'guardian_address' => 'nullable|string|max:1000',
+        ]);
+
+        if (empty($data['kelas_id']) && !empty($data['kelas_name'])) {
+            $kelas = Kelas::firstOrCreate(['name' => $data['kelas_name']]);
+            $data['kelas_id'] = $kelas->id;
+        }
+
+        unset($data['kelas_name']);
+
+        $data['status'] = $isDraft ? 'draft' : 'active';
+
+        return $data;
     }
 }

@@ -34,6 +34,10 @@
                 {{ $link['label'] }}
             </a>
         @endforeach
-        <a href="{{ route('login') }}" class="public-navbar__cta">PPDB / Login</a>
+        @auth
+            <a href="{{ auth()->user()->dashboardRoute() }}" class="public-navbar__cta">Dashboard</a>
+        @else
+            <a href="{{ route('login') }}" class="public-navbar__cta">PPDB / Login</a>
+        @endauth
     </nav>
 </header>

@@ -25,7 +25,7 @@
 
             @foreach($pageNumbers as $page)
                 <a href="{{ $paginator->url($page) }}"
-                   class="px-3 py-1 rounded-lg text-sm font-semibold {{ $page === $current ? 'bg-emerald-500 text-white border border-emerald-500 shadow' : 'text-gray-600 bg-white border border-gray-200 hover:bg-emerald-50' }}">
+                   class="px-3 py-1 rounded-lg text-sm font-semibold {{ $page === $current ? 'bg-emerald-700 text-white border border-emerald-700 shadow' : 'text-gray-600 bg-white border border-gray-200 hover:bg-emerald-50' }}">
                     {{ $page }}
                 </a>
             @endforeach

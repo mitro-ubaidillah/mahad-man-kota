@@ -11,7 +11,19 @@ class Santri extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nis', 'name', 'email', 'phone', 'kelas_id', 'birth_date',
+        'nis',
+        'name',
+        'email',
+        'phone',
+        'kelas_id',
+        'birth_date',
+        'address',
+        'previous_school',
+        'guardian_name',
+        'guardian_relation',
+        'guardian_phone',
+        'guardian_address',
+        'status',
     ];
 
     protected $casts = [

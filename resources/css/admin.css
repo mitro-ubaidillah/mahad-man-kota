@@ -237,9 +237,17 @@
     transition: 160ms ease;
 }
 
-.mahad-admin-btn--primary {
-    color: var(--admin-white);
+.mahad-admin-btn--primary,
+.mahad-admin-body .mahad-admin-btn.mahad-admin-btn--primary,
+.mahad-admin-body a.mahad-admin-btn.mahad-admin-btn--primary,
+.mahad-admin-body button.mahad-admin-btn.mahad-admin-btn--primary {
+    color: var(--admin-white) !important;
     background: var(--admin-primary);
+}
+
+.mahad-admin-body a.mahad-admin-btn--primary,
+.mahad-admin-body a.mahad-admin-btn--primary:visited {
+    color: var(--admin-white) !important;
 }
 
 .mahad-admin-btn--secondary {
@@ -407,6 +415,10 @@
     gap: 1rem;
 }
 
+.mahad-admin-form--compact {
+    max-width: 720px;
+}
+
 .mahad-admin-field {
     display: grid;
     gap: 0.45rem;
@@ -506,6 +518,49 @@
     object-fit: cover;
 }
 
+.mahad-admin-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.mahad-admin-gallery-card {
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: 20px;
+    background: var(--admin-white);
+    box-shadow: 0 14px 38px rgba(16, 36, 24, 0.06);
+}
+
+.mahad-admin-gallery-card img,
+.mahad-admin-gallery-card > span {
+    display: block;
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background:
+        radial-gradient(circle at 70% 32%, #c9a227 0 12%, transparent 13%),
+        linear-gradient(135deg, #e6f4ea, #f8f5ec);
+}
+
+.mahad-admin-gallery-card > div {
+    padding: 1rem;
+}
+
+.mahad-admin-gallery-card strong,
+.mahad-admin-gallery-card small {
+    display: block;
+}
+
+.mahad-admin-gallery-card strong {
+    color: var(--admin-dark);
+}
+
+.mahad-admin-gallery-card small {
+    margin-top: 0.25rem;
+    color: var(--admin-muted);
+}
+
 .mahad-admin-form-actions {
     display: flex;
     justify-content: flex-end;
@@ -563,6 +618,10 @@
     .mahad-admin-filter {
         grid-template-columns: 1fr 160px;
     }
+
+    .mahad-admin-gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 680px) {
@@ -581,7 +640,8 @@
     .mahad-admin-menu,
     .mahad-admin-stats,
     .mahad-admin-filter,
-    .mahad-admin-form {
+    .mahad-admin-form,
+    .mahad-admin-gallery-grid {
         grid-template-columns: 1fr;
     }
 

@@ -25,7 +25,7 @@
             <a href="{{ route('mahad-admin.articles.index', ['status' => 'published']) }}" class="mahad-admin-menu__link">
                 Pengumuman
             </a>
-            <a href="{{ route('public.gallery') }}" class="mahad-admin-menu__link">
+            <a href="{{ route('mahad-admin.gallery.index') }}" class="mahad-admin-menu__link {{ request()->routeIs('mahad-admin.gallery.*') ? 'is-active' : '' }}">
                 Galeri
             </a>
             <a href="{{ route('home') }}" class="mahad-admin-menu__link">

@@ -18,7 +18,7 @@
             <div class="p-6">
                 <p class="mb-4 text-sm text-gray-600">Import santri dari file CSV/Excel. Unduh template jika diperlukan.</p>
                 <div class="mb-4">
-                    <a href="{{ route('santris.import-template') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">
+                    <a href="{{ route('santris.import-template') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l4-4m-4 4-4-4M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6" /></svg>
                         Unduh Template (Excel)
                     </a>
@@ -31,8 +31,8 @@
                         <p id="file-name" class="mt-3 text-sm text-emerald-700 font-medium"></p>
                     </div>
                     <div class="mt-4 flex justify-end gap-3 pt-3 border-t border-gray-100">
-                        <button type="button" id="cancel-import" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition">Batal</button>
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition">Upload & Import</button>
+                        <button type="button" id="cancel-import" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-xl font-semibold text-sm transition-colors">Batal</button>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-xl transition">Upload & Import</button>
                     </div>
                 </form>
                 <p class="mt-3 text-xs text-gray-500 leading-relaxed">
@@ -93,6 +93,7 @@
                     <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">No</th>
                     <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Santri</th>
                     <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Kontak</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Wali Murid</th>
                     <th class="px-6 py-4 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">Kelas</th>
                     <th class="px-6 py-4 text-center text-xs font-semibold text-emerald-800 uppercase tracking-wider">Aksi</th>
                 </tr>
@@ -103,12 +104,21 @@
                     <tr class="hover:bg-emerald-50/40 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ($santris->firstItem() ?? 0) + $loop->index }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">{{ $s->name }}</div>
+                            <div class="flex items-center gap-2">
+                                <div class="text-sm font-medium text-gray-900">{{ $s->name ?: 'Draft santri' }}</div>
+                                @if(($s->status ?? 'active') === 'draft')
+                                    <span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">Draft</span>
+                                @endif
+                            </div>
                             <div class="text-xs text-gray-500">NIS: {{ $s->nis }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $s->email ?? '-' }}</div>
                             <div class="text-xs text-gray-500">{{ $s->phone ?? '-' }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $s->guardian_name ?? '-' }}</div>
+                            <div class="text-xs text-gray-500">{{ $s->guardian_phone ?? '-' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                             @if(optional($s->kelas)->name)
@@ -140,7 +150,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center">
+                        <td colspan="6" class="px-6 py-12 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>

@@ -14,6 +14,16 @@ class Article extends Model
     public const CATEGORY_ANNOUNCEMENT = 'Pengumuman';
     public const CATEGORY_EDUCATION = 'Artikel Edukasi';
     public const CATEGORY_PPDB = 'PPDB';
+    public const CATEGORY_GALLERY = 'Galeri';
+
+    public const CATEGORIES = [
+        self::CATEGORY_NEWS,
+        self::CATEGORY_ACTIVITY,
+        self::CATEGORY_ANNOUNCEMENT,
+        self::CATEGORY_EDUCATION,
+        self::CATEGORY_PPDB,
+        self::CATEGORY_GALLERY,
+    ];
 
     public const NEWS_CATEGORIES = [
         self::CATEGORY_NEWS,
@@ -24,6 +34,10 @@ class Article extends Model
 
     public const ARTICLE_CATEGORIES = [
         self::CATEGORY_EDUCATION,
+    ];
+
+    public const GALLERY_CATEGORIES = [
+        self::CATEGORY_GALLERY,
     ];
 
     protected $fillable = [
@@ -58,8 +72,17 @@ class Article extends Model
         return $query->whereIn('category', self::ARTICLE_CATEGORIES);
     }
 
+    public function scopeGalleryContent($query)
+    {
+        return $query->whereIn('category', self::GALLERY_CATEGORIES);
+    }
+
     public function publicUrl(): string
     {
+        if (in_array($this->category, self::GALLERY_CATEGORIES, true)) {
+            return route('public.gallery');
+        }
+
         return in_array($this->category, self::ARTICLE_CATEGORIES, true)
             ? route('public.articles.show', $this->slug)
             : route('public.news.show', $this->slug);
